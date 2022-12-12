@@ -30,6 +30,6 @@ The ansible code starts when the APU is
 Why not use some prebuilt open firewall distribution?
 * I like to understand what is going on
 * I like to stay up to date how things are done "the debian way"
-* I like debian
 * I want to practice ansible
+* I like debian
 
