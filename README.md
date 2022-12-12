@@ -17,7 +17,7 @@ The following will be needed too (yes, I love networking):
 * bridging two or more APU interfaces
 * VLAN for the unifi WLAN client traffic
 * routing/firewalling with multiple interfaces
-* DHCPv6 with prefix delegation on the uplink interface
+* DHCPv6 with prefix delegation from the uplink interface
 * radvd for distributing IPv6 internally
 * openvpn server
 * asterisk server
