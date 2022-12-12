@@ -9,12 +9,12 @@ to automate my knowledge into ansible code.
 
 The most delicate part of my installation turned out to 
 be the unifi management software, it currently keeps me 
-from updating the base os. So unifi will be the first 
+from updating the base os. So **unifi** will be the first 
 role to come to live, 
 
 The following will be needed too (yes, I love networking):
 
-* bridging two or more APU interfaces
+* **bridge** bridging two or more APU interfaces
 * VLAN for the unifi WLAN client traffic
 * routing/firewalling with multiple interfaces
 * DHCPv6 with prefix delegation (if supported from provider)
