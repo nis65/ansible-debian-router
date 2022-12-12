@@ -1,0 +1,9 @@
+upstream_interface: enp1s0
+bridges:
+  - name: br0
+    members:
+      - enp2s0
+      - enp3s0
+
+
+
