@@ -1,1 +1,15 @@
-# bla
+
+{% for bridge in bridges %}
+# set members of {{ bridge.name }} to manual
+{% for interface in bridge.members %}
+iface {{ interface }} inet manual
+{% endfor %}
+# configure {{ bridge.name }}
+auto {{ bridge.name }}
+interface {{ bridge.name }} inet static
+    bridge_ports{% for interface in bridge.members %} {{ interface }}{% endfor %}
+
+    address {{ bridge.address }}
+    netmask {{ bridge.netmask }}
+    broadcast {{ bridge.broadcast }}
+{% endfor %}

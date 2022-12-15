@@ -11,3 +11,19 @@
     dest: /etc/network/interfaces.d/bridges
     backup: no
 
+#- block:
+#  - name: get bridge status of {{ item.name }}
+#    ansible.builtin.command:
+#      cmd: ip a show {{ item.name }}
+#    register: ifacestatus
+#
+#  - name: show bridge status
+#    ansible.builtin.debug:
+#      msg: "{{ ifacestatus }}"
+#
+#  loop: "{{ bridges }}"
+
+- name: Start bridge if not running yet
+  ansible.builtin.debug:
+    msg: "Bridge {{ item.name }}"
+  loop: "{{ bridges }}"
