@@ -5,12 +5,39 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Install bridge utils
+  ansible.builtin.apt:
+    name: bridge-utils
+    state: present
+
 - name: Install bridge config file
   ansible.builtin.template:
     src: templates/etc/network/interfaces.d/bridges.j2
     dest: /etc/network/interfaces.d/bridges
     backup: no
 
+- name: reboot if bridge interface not known yet
+  ansible.builtin.reboot:
+    msg: "br0 is not defined, reboot"
+  when: ansible_facts['br0'] is not defined
+
+- block:
+
+  - name: get bridge status br0
+    ansible.builtin.command:
+      cmd: ip a show br0
+    register: ifacestatus
+    changed_when: false
+
+  - name: show br0 bridge status
+    ansible.builtin.debug:
+      msg: "{{ ifacestatus }}"
+
+#  rescue:
+#  - name: Interface not found, need a reboot
+#    ansible.builtin.command:
+#      cmd: ifup br0
+#
 #- block:
 #  - name: get bridge status of {{ item.name }}
 #    ansible.builtin.command:
@@ -23,7 +50,7 @@
 #
 #  loop: "{{ bridges }}"
 
-- name: Start bridge if not running yet
-  ansible.builtin.debug:
-    msg: "Bridge {{ item.name }}"
-  loop: "{{ bridges }}"
+# - name: Start bridge if not running yet
+#   ansible.builtin.debug:
+#     msg: "Bridge {{ item.name }}"
+#   loop: "{{ bridges }}"

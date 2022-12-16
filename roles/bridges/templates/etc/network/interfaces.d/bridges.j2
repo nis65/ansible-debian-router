@@ -6,7 +6,7 @@ iface {{ interface }} inet manual
 {% endfor %}
 # configure {{ bridge.name }}
 auto {{ bridge.name }}
-interface {{ bridge.name }} inet static
+iface {{ bridge.name }} inet static
     bridge_ports{% for interface in bridge.members %} {{ interface }}{% endfor %}
 
     address {{ bridge.address }}
