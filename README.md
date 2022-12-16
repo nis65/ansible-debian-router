@@ -26,10 +26,12 @@ The following will be needed too (yes, I love networking):
 The ansible code starts when the APU is 
 * running debian bullseye 
 * reachable over ssh without password 
+* Run it with `ansible-playbook router.yml --diff -u root -i inventory`
 
 Why not use some prebuilt open firewall distribution?
 * I like to understand what is going on
 * I like to stay up to date how things are done "the debian way"
 * I want to practice ansible
 * I like debian
+
 
