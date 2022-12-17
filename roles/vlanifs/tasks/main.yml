@@ -1,0 +1,23 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install vlan utils
+  ansible.builtin.apt:
+    name: vlan
+    state: present
+
+- name: Install vlan config file
+  ansible.builtin.template:
+    src: templates/etc/network/interfaces.d/vlanifs.j2
+    dest: /etc/network/interfaces.d/vlanifs
+    backup: no
+  register: configvlan
+
+- name: loop over all vlanifs
+  include_tasks: onevlanif.yml
+  loop: "{{ vlanifs }}"
+

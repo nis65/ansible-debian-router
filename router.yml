@@ -3,5 +3,6 @@
   hosts: mimas4
   become: true
   roles:
-    - bridges
+  - bridges
+  - vlanifs
 

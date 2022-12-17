@@ -1,0 +1,9 @@
+
+{% for vlanif in vlanifs %}
+auto {{ vlanif.baseif }}.{{ vlanif.number }}
+iface {{ vlanif.baseif }}.{{ vlanif.number }} inet static
+    address {{ vlanif.address }}
+    netmask {{ vlanif.netmask }}
+    broadcast {{ vlanif.broadcast }}
+{% endfor %}
+
