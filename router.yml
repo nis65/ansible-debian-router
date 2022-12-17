@@ -1,0 +1,7 @@
+
+- name: Debian Router Setup
+  hosts: mimas4
+  become: true
+  roles:
+    - bridges
+
