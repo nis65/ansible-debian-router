@@ -1,75 +1,23 @@
 ---
 
-# - name: Exit play if os_family is not Debian
-#   ansible.builtin.fail:
-#     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
-#   when: ansible_facts['os_family'] != "Debian"
-# 
-# - name: Install bridge utils
-#   ansible.builtin.apt:
-#     name: bridge-utils
-#     state: present
-# 
-# - name: Install bridge config file
-#   ansible.builtin.template:
-#     src: templates/etc/network/interfaces.d/bridges.j2
-#     dest: /etc/network/interfaces.d/bridges
-#     backup: no
-# 
-# - name: reboot if bridge interface not known yet
-#   ansible.builtin.reboot:
-#     msg: "br0 is not defined, reboot"
-#   when: ansible_facts['br0'] is not defined
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
 
-# - name: restart bridge if wrong IP-address
-#   ansible.builtin.command:
-#     cmd: ifdown br0; ifup br0
-#   when: ansible_facts.br0.ipv4.address != {{ }} 
+- name: Install bridge utils
+  ansible.builtin.apt:
+    name: bridge-utils
+    state: present
 
-- block:
+- name: Install bridge config file
+  ansible.builtin.template:
+    src: templates/etc/network/interfaces.d/bridges.j2
+    dest: /etc/network/interfaces.d/bridges
+    backup: no
+  register: configbridge
 
-#  - name: get bridge status br0
-#    ansible.builtin.command:
-#      cmd: ip a show br0
-#    register: ifacestatus
-#    changed_when: false
-#
-#  - name: show br0 bridge status
-#    ansible.builtin.debug:
-#      msg: "{{ ifacestatus }}"
-#
-  - name: show ansible facts
-    ansible.builtin.debug:
-      msg: "{{ ansible_facts.br0.ipv4.address }}"
+- name: loop over all bridges
+  include_tasks: onebridge.yml
+  loop: "{{ bridges }}"
 
-  - name: show data struct
-    ansible.builtin.debug:
-      msg: '{{ bridges | selectattr("name", "equalto", "br0") }}' 
-
-  - name: show desired ip
-    ansible.builtin.debug:
-      #msg: '{{ bridges | selectattr("name", "equalto", "br0") | attr("address") }}' 
-      #OK msg: '{{ bridges | selectattr("name", "equalto", "br0") | join ("", attribute="address" ) }}' 
-      msg: '{{ bridges | selectattr("name", "equalto", "br0") | join (attribute="address" ) }}' 
-
-#  rescue:
-#  - name: Interface not found, need a reboot
-#    ansible.builtin.command:
-#      cmd: ifup br0
-#
-#- block:
-#  - name: get bridge status of {{ item.name }}
-#    ansible.builtin.command:
-#      cmd: ip a show {{ item.name }}
-#    register: ifacestatus
-#
-#  - name: show bridge status
-#    ansible.builtin.debug:
-#      msg: "{{ ifacestatus }}"
-#
-#  loop: "{{ bridges }}"
-
-# - name: Start bridge if not running yet
-#   ansible.builtin.debug:
-#     msg: "Bridge {{ item.name }}"
-#   loop: "{{ bridges }}"
