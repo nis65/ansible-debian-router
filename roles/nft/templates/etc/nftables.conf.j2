@@ -60,7 +60,7 @@ table inet filter {
     oif {{ upstream_interface }} udp sport { 68 } udp dport { 67 } accept
     counter
     # rules for all other interfaces than upstream, DHCP Server
-    iif != {{ upstream_interface }} udp sport { 67 } udp dport { 68 } accept
+    oif != {{ upstream_interface }} udp sport { 67 } udp dport { 68 } accept
     # log all other packets
     log prefix "output chain "
     counter
