@@ -17,7 +17,7 @@
     backup: no
   register: configbridge
 
-- name: loop over all bridges
-  include_tasks: onebridge.yml
+- name: bring up / restart all bridges when needed
+  include_tasks: startbridge.yml
   loop: "{{ bridges }}"
 

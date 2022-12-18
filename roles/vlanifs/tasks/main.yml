@@ -17,7 +17,9 @@
     backup: no
   register: configvlan
 
-- name: loop over all vlanifs
-  include_tasks: onevlanif.yml
+# TODO TEST: Do we need a file in /etc/iproute2/rt_tables.d/ ?
+
+- name: bring up / restart all vlanifs when needed
+  include_tasks: startvlanif.yml
   loop: "{{ vlanifs }}"
 

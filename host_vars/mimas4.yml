@@ -12,6 +12,6 @@ bridges:
 vlanifs:
   - number: "700"
     baseif: "br0"
-    address: 172.28.0.1
+    address: 172.27.0.1
     netmask: 255.255.255.0
-    broadcast: 172.28.0.255
+    broadcast: 172.27.0.255
