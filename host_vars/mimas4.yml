@@ -1,4 +1,5 @@
 upstream_interface: enp1s0
+
 bridges:
   - name: "br0"
     members:
@@ -7,3 +8,10 @@ bridges:
     address: 172.30.0.1
     netmask: 255.255.254.0
     broadcast: 172.30.1.255
+
+vlanifs:
+  - number: "700"
+    baseif: "br0"
+    address: 172.27.0.1
+    netmask: 255.255.255.0
+    broadcast: 172.27.0.255

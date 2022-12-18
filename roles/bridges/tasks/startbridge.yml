@@ -4,16 +4,11 @@
 
 - name: show current loop name
   ansible.builtin.debug:
-    msg: "Running reboot/restart checks for {{ item.name }}" 
-
-- name: reboot if bridge interface not in ansible_facts
-  ansible.builtin.reboot:
-    msg: "{{ item.name }} is not defined, reboot"
-  when: ansible_facts[item.name] is not defined
+    msg: "Running restart checks for bridge {{ item.name }}"
 
 - name: get current ip from ansible_facts
   ansible.builtin.set_fact:
-    currentip: "{{ ansible_facts[item.name].ipv4.address | default('NOIP')}}"
+    currentip: "{{ ansible_facts[item.name].ipv4.address | default('NOIP') }}"
 
 - name: restart bridge interface if config changed or wrong IP-address
   ansible.builtin.shell:

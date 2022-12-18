@@ -1,0 +1,21 @@
+---
+
+# to be included in a loop
+
+- name: set interface name from item
+  ansible.builtin.set_fact:
+    fullifname: "{{ item.baseif }}.{{ item.number}}"
+
+- name: show current loop name
+  ansible.builtin.debug:
+    msg: "Running restart checks for vlan if {{ fullifname }}"
+
+- name: get current ip from ansible_facts
+  ansible.builtin.set_fact:
+    currentip: "{{ ansible_facts[fullifname].ipv4.address | default('NOIP') }}"
+
+- name: restart bridge interface if config changed or wrong IP-address
+  ansible.builtin.shell:
+    cmd: "ifdown {{ fullifname }}; ifup {{ fullifname }}"
+  when: ( currentip != item.address ) or configvlan.changed
+
