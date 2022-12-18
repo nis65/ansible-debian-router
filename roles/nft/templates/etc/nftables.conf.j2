@@ -12,6 +12,8 @@ table inet filter {
     # accept all icmp traffic
     ip protocol icmp accept
     counter
+    ip6 nexthdr ipv6-icmp accept
+    counter
     # accept all return packets
     ct state established,related accept
     counter
@@ -45,8 +47,11 @@ table inet filter {
     # accept all icmp traffic
     ip protocol icmp accept
     counter
+    ip6 nexthdr ipv6-icmp accept
+    counter
     # accept return packets
     ct state established, related accept
+    counter
     # outgoing connects allowed on all interfaces
     tcp dport { 22, 2222, 80, 443, 53, 25 } ct state new accept
     counter
