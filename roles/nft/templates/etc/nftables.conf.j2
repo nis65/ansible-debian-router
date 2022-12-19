@@ -7,8 +7,8 @@ table inet filter {
     type filter hook input priority filter;
     counter comment "input all"
     iif lo counter accept comment "input from lo"
-    ip protocol icmp counter accept comment "input icmp"
-    ip6 nexthdr ipv6-icmp counter accept comment "input icmpv6"
+    ip protocol icmp counter accept comment "input icmpv4"
+    meta l4proto ipv6-icmp counter accept comment "input icmpv6"
     ct state established,related counter accept comment "input all returns"
     # incoming connects allowed on all interfaces
     tcp dport { 22 } ct state new counter accept comment "input tcp"
@@ -29,8 +29,8 @@ table inet filter {
     type filter hook output priority filter;
     counter comment "output all"
     oif lo counter accept comment "output to lo"
-    ip protocol icmp counter accept comment "output icmp"
-    ip6 nexthdr ipv6-icmp counter accept comment "output icmpv6"
+    ip protocol icmp counter accept comment "output icmpv4"
+    meta l4proto ipv6-icmp counter accept comment "output icmpv6"
     ct state established, related counter accept comment "output all returns"
     # outgoing connects allowed on all interfaces
     tcp dport { 22, 2222, 80, 443, 53, 25 } ct state new counter accept comment "output tcp"
