@@ -4,71 +4,45 @@ flush ruleset
 
 table inet filter {
   chain input {
-    type filter hook input priority 0;
-    counter
-    # accept any localhost traffic
-    iif lo accept
-    counter
-    # accept all icmp traffic
-    ip protocol icmp accept
-    counter
-    ip6 nexthdr ipv6-icmp accept
-    counter
-    # accept all return packets
-    ct state established,related accept
-    counter
+    type filter hook input priority filter;
+    counter comment "input all"
+    iif lo counter accept comment "input from lo"
+    ip protocol icmp counter accept comment "input icmp"
+    ip6 nexthdr ipv6-icmp counter accept comment "input icmpv6"
+    ct state established,related counter accept comment "input all returns"
     # incoming connects allowed on all interfaces
-    tcp dport { 22 } ct state new accept
-    counter
-    udp sport { 123 } udp dport { 123 } accept
-    counter
-    # rules for upstream if only
-    iif {{ upstream_interface }} udp sport { 67 } udp dport { 68 } accept
-    counter
+    tcp dport { 22 } ct state new counter accept comment "input tcp"
+    udp sport { 123 } udp dport { 123 } counter accept comment "input ntp"
+    # incoming connects allowed on upstream interfaces
+    iif {{ upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
     # rules for all other interfaces than upstream, DNS Server
-    iif != {{ upstream_interface }} tcp dport { 53 } ct state new accept
-    counter
-    iif != {{ upstream_interface }} udp dport { 53 } ct state new accept
-    counter
+    iif != {{ upstream_interface }} tcp dport { 53 } ct state new counter accept comment "input downstream tcp dns"
+    iif != {{ upstream_interface }} udp dport { 53 } ct state new counter accept comment "input downstream udp dns"
     # rules for all other interfaces than upstream, DHCP Server
-    iif != {{ upstream_interface }} udp sport { 68 } udp dport { 67 } accept
+    iif != {{ upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "input downstream dhcp"
     # log all other packets
-    log prefix "input chain "
-    counter
+    counter log prefix "input chain " comment "input log drop"
     # drop all other packets
     # TODO
   }
   chain output {
-    type filter hook output priority 0;
-    counter
-    # accept any localhost traffic
-    oif lo accept
-    counter
-    # accept all icmp traffic
-    ip protocol icmp accept
-    counter
-    ip6 nexthdr ipv6-icmp accept
-    counter
-    # accept return packets
-    ct state established, related accept
-    counter
+    type filter hook output priority filter;
+    counter comment "output all"
+    oif lo counter accept comment "output to lo"
+    ip protocol icmp counter accept comment "output icmp"
+    ip6 nexthdr ipv6-icmp counter accept comment "output icmpv6"
+    ct state established, related counter accept comment "output all returns"
     # outgoing connects allowed on all interfaces
-    tcp dport { 22, 2222, 80, 443, 53, 25 } ct state new accept
-    counter
-    udp dport { 53 } ct state new accept
-    counter
-    udp sport { 123 } udp dport { 123 } accept
-    counter
-    udp dport { 123 } ct state new accept
-    counter
+    tcp dport { 22, 2222, 80, 443, 53, 25 } ct state new counter accept comment "output tcp"
+    udp dport { 53 } ct state new counter accept comment "output udp"
+    udp sport { 123 } udp dport { 123 } counter accept comment "output ntp"
+    udp dport { 123 } ct state new counter accept comment "output ntp stateful"
     # rules for upstream if only
-    oif {{ upstream_interface }} udp sport { 68 } udp dport { 67 } accept
-    counter
+    oif {{ upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
     # rules for all other interfaces than upstream, DHCP Server
-    oif != {{ upstream_interface }} udp sport { 67 } udp dport { 68 } accept
+    oif != {{ upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "output downstream dhcp"
     # log all other packets
-    log prefix "output chain "
-    counter
+    counter log prefix "output chain " comment "output log drop"
     # drop all other packets
     # TODO
   }
