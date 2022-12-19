@@ -1,0 +1,20 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install nftables config file
+  ansible.builtin.template:
+    src: templates/etc/nftables.conf.j2
+    dest: /etc/nftables.conf
+    backup: no
+  register: confignftables
+
+- name: Enable / Restart nftables when config file changed
+  ansible.builtin.systemd:
+    name: "nftables.service"
+    state: restarted
+    enabled: yes
+  when: confignftables.changed
