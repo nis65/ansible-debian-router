@@ -1,0 +1,61 @@
+---
+
+  # this playbook is the ansbile version of the instructions here:
+  # https://gist.github.com/sinofool/233ed96dd85123ee5a87ad12e812d424
+  
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install curl, gpg
+  ansible.builtin.apt:
+    name: 
+      - curl
+      - gpg
+      - ca-certificates
+      - apt-transport-https
+    state: present
+
+- name: Check keyfile
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/adoptopenjdk-archive-keyring.gpg
+  register: statresult
+
+- name: Create keyfile if does not exist yet
+  ansible.builtin.shell:
+    cmd: 'curl -fsSL "https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" | gpg --dearmor --yes -o /usr/share/keyrings/adoptopenjdk-archive-keyring.gpg'
+  when: not statresult.stat.exists
+ 
+- name: configure repo for java
+  ansible.builtin.copy:
+    src: files/etc/apt/sources.list.d/adoptopenjdk.list
+    dest: /etc/apt/sources.list.d/adoptopenjdk.list
+
+- name: Install MongoDB apt key
+  ansible.builtin.apt_key:
+    url: https://www.mongodb.org/static/pgp/server-3.6.asc
+    state: present
+
+- name: Configure MongoDB repo
+  ansible.builtin.copy:
+    src: files/etc/apt/sources.list.d/mongodb.list
+    dest: /etc/apt/sources.list.d/mongodb.list
+
+- name: Install unifi apt key
+  ansible.builtin.apt_key:
+    url: https://dl.ui.com/unifi/unifi-repo.gpg
+    state: present
+
+- name: Configure Unifi repo
+  ansible.builtin.copy:
+    src: files/etc/apt/sources.list.d/100-ubnt-unifi.list
+    dest: /etc/apt/sources.list.d/100-ubnt-unifi.list
+
+- name: Install openjdk8, unifi
+  ansible.builtin.apt:
+    name:
+      - adoptopenjdk-8-hotspot
+      - unifi
+    state: present
+    update_cache: yes
