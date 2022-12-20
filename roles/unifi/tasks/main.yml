@@ -8,11 +8,13 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- name: Install vlan utils
+- name: Install curl, gpg
   ansible.builtin.apt:
     name: 
       - curl
       - gpg
+      - ca-certificates
+      - apt-transport-https
     state: present
 
 - name: Check keyfile
@@ -30,11 +32,30 @@
     src: files/etc/apt/sources.list.d/adoptopenjdk.list
     dest: /etc/apt/sources.list.d/adoptopenjdk.list
 
-- name: Install openjdk8
+- name: Install MongoDB apt key
+  ansible.builtin.apt_key:
+    url: https://www.mongodb.org/static/pgp/server-3.6.asc
+    state: present
+
+- name: Configure MongoDB repo
+  ansible.builtin.copy:
+    src: files/etc/apt/sources.list.d/mongodb.list
+    dest: /etc/apt/sources.list.d/mongodb.list
+
+- name: Install unifi apt key
+  ansible.builtin.apt_key:
+    url: https://dl.ui.com/unifi/unifi-repo.gpg
+    state: present
+
+- name: Configure Unifi repo
+  ansible.builtin.copy:
+    src: files/etc/apt/sources.list.d/100-ubnt-unifi.list
+    dest: /etc/apt/sources.list.d/100-ubnt-unifi.list
+
+- name: Install openjdk8, unifi
   ansible.builtin.apt:
-    name: adoptopenjdk-8-hotspot
+    name:
+      - adoptopenjdk-8-hotspot
+      - unifi
     state: present
     update_cache: yes
-
-## WIP, rest to come
-
