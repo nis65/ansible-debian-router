@@ -1,0 +1,11 @@
+
+nft_unifi: 
+  - name: input_downstream_tcp
+    ports:
+      - "8443"
+  - name: input_mgmt_tcp
+    ports:
+      - "8080"
+  - name: input_mgmt_udp
+    ports:
+      - "3478, 10001"

@@ -1,4 +1,5 @@
 upstream_interface: enp1s0
+mgmt_interface: br0
 
 bridges:
   - name: "br0"

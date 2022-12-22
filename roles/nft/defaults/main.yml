@@ -3,6 +3,7 @@ nft_local_traffic:
   - name: output_tcp
     ports:
       - "53"
+      - "25"
       - "22, 2222"
       - "80, 443"
   - name: output_udp
