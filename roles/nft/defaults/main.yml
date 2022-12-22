@@ -12,4 +12,3 @@ nft_local_traffic:
   - name: input_tcp
     ports:
       - "22"
-    
