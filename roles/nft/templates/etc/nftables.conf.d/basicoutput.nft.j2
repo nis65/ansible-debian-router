@@ -1,0 +1,7 @@
+{% for set in nft_local_traffic %}
+## Set {{ set.name }}_ports
+{% for port in set.ports %}
+add element inet filter {{ set.name }}_ports { {{ port }} }
+{% endfor %}
+
+{% endfor %}

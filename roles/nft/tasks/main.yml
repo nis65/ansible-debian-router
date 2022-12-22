@@ -5,6 +5,19 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Create nftables conf directory when needed
+  ansible.builtin.file:
+    path: /etc/nftables.conf.d
+    state: directory
+    mode: 0755
+
+- name: Install basic nftables portlists
+  ansible.builtin.template:
+    src: templates/etc/nftables.conf.d/basicoutput.nft.j2
+    dest: /etc/nftables.conf.d/basicoutput.nft
+    backup: no
+  register: configbasicoutput
+
 - name: Install nftables config file
   ansible.builtin.template:
     src: templates/etc/nftables.conf.j2
@@ -12,9 +25,9 @@
     backup: no
   register: confignftables
 
-- name: Enable / Restart nftables when config file changed
+- name: Enable / Restart nftables when config files changed
   ansible.builtin.systemd:
     name: "nftables.service"
     state: restarted
     enabled: yes
-  when: confignftables.changed
+  when: confignftables.changed or configbasicoutput.changed
