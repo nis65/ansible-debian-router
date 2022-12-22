@@ -4,9 +4,20 @@ flush ruleset
 
 add table inet filter
 
-add set     inet filter input_tcp_ports { type inet_service; flags interval; }
-add set     inet filter output_tcp_ports { type inet_service; flags interval; }
-add set     inet filter output_udp_ports { type inet_service; flags interval; }
+add set inet filter input_tcp_ports { type inet_service; flags interval; }
+add set inet filter input_udp_ports { type inet_service; flags interval; }
+add set inet filter output_tcp_ports { type inet_service; flags interval; }
+add set inet filter output_udp_ports { type inet_service; flags interval; }
+
+add set inet filter input_downstream_tcp_ports { type inet_service; flags interval; }
+add set inet filter input_downstream_udp_ports { type inet_service; flags interval; }
+add set inet filter output_downstream_tcp_ports { type inet_service; flags interval; }
+add set inet filter output_downstream_udp_ports { type inet_service; flags interval; }
+
+add set inet filter input_mgmt_tcp_ports { type inet_service; flags interval; }
+add set inet filter input_mgmt_udp_ports { type inet_service; flags interval; }
+add set inet filter output_mgmt_tcp_ports { type inet_service; flags interval; }
+add set inet filter output_mgmt_udp_ports { type inet_service; flags interval; }
 
 #### INPUT CHAIN
 add chain inet filter input { type filter hook input priority filter; policy accept; }
@@ -18,8 +29,18 @@ add rule  inet filter input meta l4proto ipv6-icmp counter accept comment "input
 add rule  inet filter input ct state established,related counter accept comment "input all returns"
 # incoming connects allowed on all interfaces
 add rule  inet filter input tcp dport @input_tcp_ports ct state new counter accept comment "input tcp"
+add rule  inet filter input tcp dport @input_udp_ports ct state new counter accept comment "input udp"
 # incoming connects allowed on upstream interface
 add rule  inet filter input iif {{ upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
+# incoming connects allowed on downstream interfaces
+add rule  inet filter input iif != {{ upstream_interface }} tcp dport @input_downstream_tcp_ports counter accept comment "input downstream tcp"
+add rule  inet filter input iif != {{ upstream_interface }} udp dport @input_downstream_udp_ports counter accept comment "input downstream udp"
+{% if mgmt_interface is defined -%}
+# incoming connects allowed on mgmt interface
+add rule  inet filter input iif {{ mgmt_interface }} tcp dport @input_mgmt_tcp_ports counter accept comment "input mgmt tcp"
+add rule  inet filter input iif {{ mgmt_interface }} udp dport @input_mgmt_udp_ports counter accept comment "input mgmt udp"
+{% endif -%}
+
 # drop all other packets
 add rule  inet filter input counter log prefix "input chain " comment "input log drop"
 
@@ -35,8 +56,12 @@ add rule  inet filter output ct state established, related counter accept commen
 add rule  inet filter output tcp dport @output_tcp_ports ct state new counter accept comment "output tcp"
 add rule  inet filter output udp dport @output_udp_ports ct state new counter accept comment "output udp"
 add rule  inet filter output ip protocol igmp counter accept comment "output igmp"
-# incoming connects allowed on upstream interface
+# outgoing connects allowed on upstream interface
 add rule  inet filter output oif {{ upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
+# outgoing connects allowed on downstream interfaces
+add rule  inet filter output oif != {{ upstream_interface }} tcp dport @output_downstream_tcp_ports counter accept comment "output downstream tcp"
+add rule  inet filter output oif != {{ upstream_interface }} udp dport @output_downstream_udp_ports counter accept comment "output downstream udp"
+
 # drop all other packets
 add rule  inet filter output counter log prefix "output chain " comment "output log drop"
 

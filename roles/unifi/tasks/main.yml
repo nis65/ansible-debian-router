@@ -1,12 +1,26 @@
 ---
 
-  # this playbook is the ansbile version of the instructions here:
+  # the install part of this playbook is the ansible version of the instructions here:
   # https://gist.github.com/sinofool/233ed96dd85123ee5a87ad12e812d424
   
 - name: Exit play if os_family is not Debian
   ansible.builtin.fail:
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
+
+- name: Open ports needed for unifi
+  ansible.builtin.template:
+    src: templates/etc/nftables.conf.d/unifi.nft.j2
+    dest: /etc/nftables.conf.d/unifi.nft
+    backup: no
+  register: nftconfig
+
+- name: Enable / Restart nftables when config files changed
+  ansible.builtin.systemd:
+    name: "nftables.service"
+    state: restarted
+    enabled: yes
+  when: nftconfig.changed
 
 - name: Install curl, gpg
   ansible.builtin.apt:
