@@ -1,5 +1,4 @@
 upstream_interface: enp1s0
-mgmt_interface: br0
 
 bridges:
   - name: "br0"
@@ -10,9 +9,13 @@ bridges:
     netmask: 255.255.254.0
     broadcast: 172.30.1.255
 
+mgmt_interface: br0
+
 vlanifs:
   - number: "700"
     baseif: "br0"
     address: 172.27.0.1
     netmask: 255.255.255.0
     broadcast: 172.27.0.255
+
+openvpn_server_name: mimasvpn

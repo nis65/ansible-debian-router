@@ -9,6 +9,7 @@ The base architecture for nftables is as follows:
 
 * One `filter` table with three chains: `input`, `output`, `forward`. This is functionally equivalent to the old `iptables` concept
 * Each chain has policy `drop`, so if you don't explicitly allow traffic, it will be blocked
+* Each rule has a counter associated with to check if the rules get actually used
 * The end of each chain has a `log` rule, so all blocked packets are logged
 * Each chain has some default `accept` filters:
   * localhost (on input/output) is always allowed
@@ -94,6 +95,15 @@ Which can be seen with `nft list ruleset`:
                 elements = { 22 }
         }
 
+```
+
+and these sets are used here:
+
+```
+add rule  inet filter output tcp dport @output_tcp_ports ct state new counter accept comment "output tcp"
+add rule  inet filter output udp dport @output_udp_ports ct state new counter accept comment "output udp"
+...
+add rule  inet filter input  tcp dport @input_tcp_ports  ct state new counter accept comment "input tcp"
 ```
 
 
