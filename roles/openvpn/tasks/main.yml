@@ -1,0 +1,25 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install openvpn
+  ansible.builtin.apt:
+    name: openvpn
+    state: present
+
+- name: Install openvpn server config
+  ansible.builtin.template:
+    src: templates/etc/openvpn/server/server.conf.j2
+    dest: /etc/openvpn/server/{{ openvpn_server_name }}.conf
+    backup: no
+  register: configopenvpn
+
+- name: Start openvpn server
+  ansible.builtin.systemd:
+    name: openvpn-server@{{ openvpn_server_name }}.service
+    state: restarted
+    enabled: yes
+  when: configopenvpn.changed
