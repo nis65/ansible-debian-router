@@ -104,3 +104,5 @@ Which can be seen with `nft list ruleset`:
 * Format of `/etc/nftables.conf`
   * It took me hours to figure out that the first format for `nft -t` files, the *format seen in the output of nft list*, is not extendable at all.
   * The solution now has the advantage that any role that is executed after the `nft` role can add files in `/etc/nftables.conf.d` in the same format and add elements to the individual sets without needing to know what other applications added. It also saves me from using ugly ansible magic to combine elements of various sources into one. `nftables` does the magic for us. The `unifi` role was the first to use this.
+* All nft sets have the flag `interval`. This is why port ranges (e.g. `1027-1030`) would also work in a port list. If you don't need this, it might give you a (probably small) performance gain to remove that flag in `/etc/nftables.conf`.
+  
