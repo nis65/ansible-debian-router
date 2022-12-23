@@ -5,21 +5,25 @@ decades. I started with WRAP, used ALIX and now it is an APU2.
 Instead of keeping lots of detailed documentation, I decided
 to automate my knowledge into ansible code.
 
-**WARNING**: This is very early work in progress. **do not use!**
+This is **work in progress**. Current state:
 
-The most delicate part of my installation turned out to 
-be the unifi management software, it currently keeps me 
-from updating the base os. So **unifi** will be the first 
-role to come to live, 
+The following roles are implemented and tested until now:
 
-The following will be needed too (yes, I love networking):
+* **bridges**: configure bridges on top of other interfaces
+* **vlanifs**: configure vlans on top of other interfaces
 
-* **bridge** bridging two or more APU interfaces
-* VLAN for the unifi WLAN client traffic
-* routing/firewalling with multiple interfaces
+These first two roles are completely independent of each other, depending on
+your network architecture you might need to execute the roles in a different
+order than documented here.
+
+* **nft**: configure the nftables firewall. Allows later packages to add their own nftables rules
+* **unifi**: add nft rules and install unifi software
+
+The following is planned (yes, I love networking):
+
+* openvpn server
 * DHCPv6 with prefix delegation (if supported from provider)
 * radvd for distributing IPv6 internally
-* openvpn server
 * asterisk server
 * ...
 
