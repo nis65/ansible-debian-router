@@ -10,6 +10,30 @@
     name: openvpn
     state: present
 
+- name: ensure dh2048.pem file is present
+  ansible.builtin.copy:
+    src: "{{ openvpn_dhfile_source }}"
+    dest: /etc/openvpn/server/dh2048.pem
+    force: no
+
+- name: ensure ca.crt file is present
+  ansible.builtin.copy:
+    src: "{{ openvpn_cafile_source }}"
+    dest: /etc/openvpn/server/ca.crt
+    force: no
+
+- name: ensure server.crt is present
+  ansible.builtin.copy:
+    src: "{{ openvpn_certfile_source }}"
+    dest: /etc/openvpn/server/server.crt
+    force: no
+
+- name: ensure server.key file is present
+  ansible.builtin.copy:
+    src: "{{ openvpn_keyfile_source }}"
+    dest: /etc/openvpn/server/server.key
+    force: no
+
 - name: Install openvpn server config
   ansible.builtin.template:
     src: templates/etc/openvpn/server/server.conf.j2

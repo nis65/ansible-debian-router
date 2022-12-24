@@ -10,7 +10,6 @@ dh dh2048.pem
 server {{ openvpn_server_ip }} {{ openvpn_server_mask }}
 ifconfig-pool-persist /var/log/openvpn/ipp.txt
 keepalive 10 120
-tls-auth ta.key 0 # This file is secret
 cipher AES-256-CBC
 persist-key
 persist-tun
@@ -18,11 +17,14 @@ status /var/log/openvpn/openvpn-status.log
 verb {{ openvpn_verb }}
 explicit-exit-notify 1
 # Added as I prefer it like this
-#multihome
+topology subnet
+multihome
 #script-security {{ openvpn_script_security }}
 #client-config-dir {{ openvpn_client_config_dir }}
-#user nobody
-#group nobody
-#management /var/run/openvpn.socket unix
-#management-client-user root
-
+user nobody
+group nogroup
+# use with "socat - /var/run/openvpn.socket"
+management /var/run/openvpn.socket unix
+management-client-user root
+#Removed from default for backward compatibility
+# tls-auth ta.key 0 # This file is secret
