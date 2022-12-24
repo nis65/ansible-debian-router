@@ -19,3 +19,7 @@ vlanifs:
     broadcast: 172.27.0.255
 
 openvpn_server_name: mimasvpn
+openvpn_dhfile_source: ~/vpnsecrets/dh.pem
+openvpn_cafile_source: ~/vpnsecrets/ca.crt
+openvpn_certfile_source: ~/vpnsecrets/issued/server.crt
+openvpn_keyfile_source: ~/vpnsecrets/private/server.key
