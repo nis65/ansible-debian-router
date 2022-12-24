@@ -14,6 +14,7 @@ The base architecture for nftables is as follows:
 * Each chain has some default `accept` filters:
   * localhost (on input/output) is always allowed
   * ICMP/ICMPv6 is always allowed (you might want to be more strict on that)
+  * **TODO** document/test igmp
   * return packets are always allowed (i.e. they can be associated with an earlier packet, stateful!)
   * DHCPrequests from the upstream interface (and its replies) are always allowed (stateless)
 * there is a nftables [set](https://wiki.nftables.org/wiki-nftables/index.php/Sets) for various interfaces and interfaces groups, defining the allowed destinations tcp/udp ports for a certain interface group:
