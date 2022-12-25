@@ -1,0 +1,19 @@
+
+nft_dnsmasq: 
+  - name: input_downstream_tcp
+    ports:
+      - "53"
+  - name: input_downstream_udp
+    ports:
+      - "53"
+
+dsnmasq_except_interface: enp1s0
+dnsmasq_other_servers:
+  - name: UCS Domains
+    domains: 
+      - t7.iselin.net
+      - 0.25.172.in-addr.arpa
+    serverips:
+      - 172.25.0.10
+      - 172.25.0.12
+

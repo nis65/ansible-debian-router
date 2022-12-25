@@ -1,0 +1,10 @@
+except-interface={{ dsnmasq_except_interface }}
+log-queries
+
+{% for server in dnsmasq_other_servers %}
+{% for domain in server.domains %}
+{% for ip in server.serverips %}
+server=/{{domain}}/{{ip}}
+{% endfor %}
+{% endfor %}
+{% endfor %}
