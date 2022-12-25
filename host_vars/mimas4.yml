@@ -18,6 +18,34 @@ vlanifs:
     netmask: 255.255.255.0
     broadcast: 172.27.0.255
 
+dsnmasq_except_interface: enp1s0
+
+dnsmasq_dhcp_domain_name_servers:
+  - 172.30.0.1
+
+dnsmasq_dhcp_domain_names:
+  - iselin.ch
+  - iselin.net
+
+dnsmasq_other_servers:
+  - name: UCS Domains
+    domains:
+      - t7.iselin.net
+      - 0.25.172.in-addr.arpa
+    serverips:
+      - 172.25.0.10
+      - 172.25.0.12
+
+dnsmasq_dhcp_staticips_source: ~/staticips
+
+dnsmasq_dhcp_ranges:
+  - name: LAN
+    range: "172.30.0.100,172.30.0.199"
+    leasetime: "24h"
+  - name: WLAN
+    range: "172.27.0.10,172.27.0.199"
+    leasetime: "12h"
+
 openvpn_server_name: mimasvpn
 openvpn_dhfile_source: ~/vpnsecrets/dh.pem
 openvpn_cafile_source: ~/vpnsecrets/ca.crt

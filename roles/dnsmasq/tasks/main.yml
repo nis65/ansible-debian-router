@@ -31,10 +31,17 @@
     backup: no
   register: configdnsmasq
 
+- name: ensure some static hosts file is present
+  ansible.builtin.copy:
+    src: "{{ dnsmasq_dhcp_staticips_source }}"
+    dest: /etc/dnsmasq.d/staticips
+    force: no
+  register: configdnsmasqstatic
+
 - name: restart dnsmasq
   ansible.builtin.systemd:
     name: "dnsmasq.service"
     state: restarted
     enabled: yes
-  when: configdnsmasq.changed
+  when: configdnsmasq.changed or configdnsmasqstatic.changed
 

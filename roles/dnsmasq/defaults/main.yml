@@ -7,13 +7,5 @@ nft_dnsmasq:
     ports:
       - "53"
 
-dsnmasq_except_interface: enp1s0
-dnsmasq_other_servers:
-  - name: UCS Domains
-    domains: 
-      - t7.iselin.net
-      - 0.25.172.in-addr.arpa
-    serverips:
-      - 172.25.0.10
-      - 172.25.0.12
-
+dnsmasq_flags:
+  - log-queries
