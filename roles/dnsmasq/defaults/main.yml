@@ -1,0 +1,11 @@
+
+nft_dnsmasq: 
+  - name: input_downstream_tcp
+    ports:
+      - "53"
+  - name: input_downstream_udp
+    ports:
+      - "53"
+
+dnsmasq_flags:
+  - log-queries

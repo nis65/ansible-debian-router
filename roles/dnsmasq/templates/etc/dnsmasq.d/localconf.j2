@@ -1,0 +1,21 @@
+# DNS part
+
+except-interface={{ dsnmasq_except_interface }}
+
+{% for flag in dnsmasq_flags %}
+{{ flag }}
+{% endfor %}
+
+{% for server in dnsmasq_other_servers %}
+{% for domain in server.domains %}
+{% for ip in server.serverips %}
+server=/{{domain}}/{{ip}}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+# DHCP part
+{% for dhcprange in dnsmasq_dhcp_ranges %}
+# {{ dhcprange.name }}:
+dhcp-range={{ dhcprange.range }},{{ dhcprange.leasetime }}
+{% endfor %}
