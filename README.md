@@ -21,8 +21,8 @@ order than documented here.
 
 The following is planned (yes, I love networking):
 
-* openvpn server
-* Dnsmasq server (dhcp and DNS Server)
+* openvpn server (implemented, but untested). TODO: some words about dyndns
+* Dnsmasq server (implemented, but untested)
 * Fail2ban: dynamically ban illegitimate sources
 * DHCPv6 with prefix delegation (if supported from provider)
 * radvd for distributing IPv6 internally
