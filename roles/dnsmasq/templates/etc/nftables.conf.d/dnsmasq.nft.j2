@@ -5,3 +5,8 @@ add element inet filter {{ set.name }}_ports { {{ port }} }
 {% endfor %}
 
 {% endfor %}
+
+## Add stateless rules
+
+add rule inet filter input_apprules  iif @downstream_interfaces udp sport { 68 } udp dport { 67 } counter accept comment "input dnsmasq downstream dhcp requests"
+add rule inet filter output_apprules oif @downstream_interfaces udp sport { 67 } udp dport { 68 } counter accept comment "output dnsmasq downstream dhcp replies"

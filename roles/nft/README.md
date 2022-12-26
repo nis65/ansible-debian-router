@@ -51,7 +51,7 @@ nft_local_traffic:
       - "22"
 ```
 
-creates the nft file `/etc/nftables.conf.d/basicoutput.nft` which is included by `/etc/nftables.conf`:
+creates the nft file `/etc/nftables.conf.d/nftbase.nft` which is included by `/etc/nftables.conf`:
 
 ```
 ## Set output_tcp_ports

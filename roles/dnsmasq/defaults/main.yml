@@ -9,3 +9,4 @@ nft_dnsmasq:
 
 dnsmasq_flags:
   - log-queries
+  - log-dhcp

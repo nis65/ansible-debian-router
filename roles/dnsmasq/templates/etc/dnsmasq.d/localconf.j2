@@ -1,6 +1,6 @@
 # DNS part
 
-except-interface={{ dsnmasq_except_interface }}
+except-interface={{ dnsmasq_except_interface }}
 
 {% for flag in dnsmasq_flags %}
 {{ flag }}
@@ -15,6 +15,10 @@ server=/{{domain}}/{{ip}}
 {% endfor %}
 
 # DHCP part
+
+# not supported by all clients
+dhcp-option=option:domain-search{% for domain in dnsmasq_dhcp_search_domain_names %},{{domain}}{% endfor %}
+
 {% for dhcprange in dnsmasq_dhcp_ranges %}
 # {{ dhcprange.name }}:
 dhcp-range={{ dhcprange.range }},{{ dhcprange.leasetime }}
