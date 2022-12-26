@@ -25,14 +25,17 @@ The base architecture for nftables is as follows:
     * also an `output` (instead of `input`) variant
     * also a `udp` (instead of `tcp`) variant
     * giving a total of (currently) 12 sets
+  * This can be copy/pasted by applications that need to set their own rules (as long you only want to specify a stateful destination port)
+* There are currently two custom chains that are called from the input/output chain just before logging and dropping packets. This is useful for applications to add their own rules if the filter is not just a destination port and an interface (group). This has been used e.g. by the `dnsmasq` role:
+  * `input_apprules`: Add a rule with `add rule inet filter input_apprules ...`
+  * `output_apprules`: Add a rule with `add rule inet filter output_apprules ...`
 
-**warning**: This is work in heavy progress, the `forward` stuff is not yet engineered.
 
 ## Variable
 
 (naming to be changed)
 
-`nft_local_traffic` is a list of dicts. Every dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to. So
+`nft_local_traffic` is a list of dicts. Every dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to.
 
 ```
 nft_local_traffic:
@@ -107,6 +110,7 @@ add rule  inet filter output udp dport @output_udp_ports ct state new counter ac
 add rule  inet filter input  tcp dport @input_tcp_ports  ct state new counter accept comment "input tcp"
 ```
 
+## Application rules
 
 ## Implementation notes
 

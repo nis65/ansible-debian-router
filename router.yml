@@ -7,6 +7,6 @@
   - vlanifs
   - nft
   - routing
-  - unifi
   - dnsmasq
+  - unifi
   - openvpn
