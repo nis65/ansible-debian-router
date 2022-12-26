@@ -1,5 +1,5 @@
-upstream_interface: enp1s0
 
+# bridges role
 bridges:
   - name: "br0"
     members:
@@ -9,7 +9,7 @@ bridges:
     netmask: 255.255.254.0
     broadcast: 172.30.1.255
 
-mgmt_interface: br0
+# vlanifs role
 
 vlanifs:
   - number: "700"
@@ -18,12 +18,21 @@ vlanifs:
     netmask: 255.255.255.0
     broadcast: 172.27.0.255
 
-dsnmasq_except_interface: enp1s0
+# nft role
 
-dnsmasq_dhcp_domain_name_servers:
-  - 172.30.0.1
+nft_upstream_interface: enp1s0
+nft_mgmt_interface: br0
+nft_downstream_interfaces:
+  - br0
+  - br0.700
 
-dnsmasq_dhcp_domain_names:
+# unifi role: nothing host specific (until now)
+
+# dnsmasq role
+
+dnsmasq_except_interface: enp1s0
+
+dnsmasq_dhcp_search_domain_names:
   - iselin.ch
   - iselin.net
 
@@ -45,6 +54,8 @@ dnsmasq_dhcp_ranges:
   - name: WLAN
     range: "172.27.0.10,172.27.0.199"
     leasetime: "12h"
+
+# openvpn role
 
 openvpn_server_name: mimasvpn
 openvpn_dhfile_source: ~/vpnsecrets/dh.pem

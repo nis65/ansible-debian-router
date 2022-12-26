@@ -1,5 +1,4 @@
 
-openvpn_server_name: defaultname
 openvpn_port: 1194
 openvpn_proto: udp
 openvpn_server_ip: 10.8.0.0

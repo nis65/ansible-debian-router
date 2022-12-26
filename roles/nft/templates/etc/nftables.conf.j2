@@ -4,6 +4,11 @@ flush ruleset
 
 add table inet filter
 
+add set inet filter downstream_interfaces { type iface_index; }
+{% for iface in nft_downstream_interfaces %}
+add element inet filter downstream_interfaces { {{ iface }} }
+{% endfor %}
+
 add set inet filter input_tcp_ports { type inet_service; flags interval; }
 add set inet filter input_udp_ports { type inet_service; flags interval; }
 add set inet filter output_tcp_ports { type inet_service; flags interval; }
@@ -19,8 +24,13 @@ add set inet filter input_mgmt_udp_ports { type inet_service; flags interval; }
 add set inet filter output_mgmt_tcp_ports { type inet_service; flags interval; }
 add set inet filter output_mgmt_udp_ports { type inet_service; flags interval; }
 
+#### chains for application rules
+
+add chain inet filter input_apprules
+add chain inet filter output_apprules
+
 #### INPUT CHAIN
-add chain inet filter input { type filter hook input priority filter; policy accept; }
+add chain inet filter input { type filter hook input priority filter; policy drop; }
 
 add rule  inet filter input counter comment "input all"
 add rule  inet filter input iif lo counter accept comment "input from lo"
@@ -31,21 +41,23 @@ add rule  inet filter input ct state established,related counter accept comment 
 add rule  inet filter input tcp dport @input_tcp_ports ct state new counter accept comment "input tcp"
 add rule  inet filter input tcp dport @input_udp_ports ct state new counter accept comment "input udp"
 # incoming connects allowed on upstream interface
-add rule  inet filter input iif {{ upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
+add rule  inet filter input iif {{ nft_upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
 # incoming connects allowed on downstream interfaces
-add rule  inet filter input iif != {{ upstream_interface }} tcp dport @input_downstream_tcp_ports counter accept comment "input downstream tcp"
-add rule  inet filter input iif != {{ upstream_interface }} udp dport @input_downstream_udp_ports counter accept comment "input downstream udp"
-{% if mgmt_interface is defined -%}
+add rule  inet filter input iif @downstream_interfaces tcp dport @input_downstream_tcp_ports counter accept comment "input downstream tcp"
+add rule  inet filter input iif @downstream_interfaces udp dport @input_downstream_udp_ports counter accept comment "input downstream udp"
+{% if nft_mgmt_interface is defined -%}
 # incoming connects allowed on mgmt interface
-add rule  inet filter input iif {{ mgmt_interface }} tcp dport @input_mgmt_tcp_ports counter accept comment "input mgmt tcp"
-add rule  inet filter input iif {{ mgmt_interface }} udp dport @input_mgmt_udp_ports counter accept comment "input mgmt udp"
+add rule  inet filter input iif {{ nft_mgmt_interface }} tcp dport @input_mgmt_tcp_ports counter accept comment "input mgmt tcp"
+add rule  inet filter input iif {{ nft_mgmt_interface }} udp dport @input_mgmt_udp_ports counter accept comment "input mgmt udp"
 {% endif -%}
 
+# jump to application rules
+add rule  inet filter input counter jump input_apprules comment "input app rules"
 # drop all other packets
 add rule  inet filter input counter log prefix "input chain " comment "input log drop"
 
 #### OUTPUT CHAIN
-add chain inet filter output { type filter hook output priority filter; policy accept; }
+add chain inet filter output { type filter hook output priority filter; policy drop; }
 
 add rule  inet filter output counter comment "output all"
 add rule  inet filter output oif lo counter accept comment "output to lo"
@@ -57,20 +69,38 @@ add rule  inet filter output tcp dport @output_tcp_ports ct state new counter ac
 add rule  inet filter output udp dport @output_udp_ports ct state new counter accept comment "output udp"
 add rule  inet filter output ip protocol igmp counter accept comment "output igmp"
 # outgoing connects allowed on upstream interface
-add rule  inet filter output oif {{ upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
+add rule  inet filter output oif {{ nft_upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
 # outgoing connects allowed on downstream interfaces
-add rule  inet filter output oif != {{ upstream_interface }} tcp dport @output_downstream_tcp_ports counter accept comment "output downstream tcp"
-add rule  inet filter output oif != {{ upstream_interface }} udp dport @output_downstream_udp_ports counter accept comment "output downstream udp"
+add rule  inet filter output oif @downstream_interfaces tcp dport @output_downstream_tcp_ports counter accept comment "output downstream tcp"
+add rule  inet filter output oif @downstream_interfaces udp dport @output_downstream_udp_ports counter accept comment "output downstream udp"
 
+# jump to application rules
+add rule  inet filter output counter jump output_apprules comment "output app rules"
 # drop all other packets
 add rule  inet filter output counter log prefix "output chain " comment "output log drop"
 
 #### FORWARD CHAIN
-add chain inet filter forward { type filter hook forward priority filter; policy accept; }
-
+add chain inet filter forward { type filter hook forward priority filter; policy drop; }
+add rule  inet filter forward counter comment "forward all"
+add rule  inet filter forward meta l4proto      icmp counter accept comment "forward icmpv4"
+add rule  inet filter forward meta l4proto ipv6-icmp counter accept comment "forward icmpv6"
+add rule  inet filter forward ct state established, related counter accept comment "forward all returns"
+# add packets allowed from downstream interfaces (no restrictions at all, separate rules for stats only, stateful)
+add rule  inet filter forward iif @downstream_interfaces ip protocol tcp ct state new counter accept comment "forward all new tcp"
+add rule  inet filter forward iif @downstream_interfaces ip protocol udp ct state new counter accept comment "forward all new udp"
+# drop all other packets
 add rule  inet filter forward counter log prefix "forward chain " comment "forward log drop"
 
-#### include all *nft files in conf directory,
-#### adding an element a 2nd time to the same set is ignored, good :-)
+# masquerade IPv4 from downstream interfaces to upstream interface
+add table   ip masq
+add set     ip masq downstream_interfaces { type iface_index; }
+{% for iface in nft_downstream_interfaces %}
+add element ip masq downstream_interfaces { {{ iface }} }
+{% endfor %}
+add chain   ip masq postrouting { type nat hook postrouting priority mangle; policy accept; }
+add rule    ip masq postrouting iif @downstream_interfaces oif {{ nft_upstream_interface }} masquerade
+
+#### include all *nft files in conf dir
+#### hint: nftables ignores duplicates in the same set
 
 include "/etc/nftables.conf.d/*.nft"

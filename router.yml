@@ -6,6 +6,7 @@
   - bridges
   - vlanifs
   - nft
-  - unifi
+  - routing
   - dnsmasq
+  - unifi
   - openvpn
