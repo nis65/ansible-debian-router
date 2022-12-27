@@ -1,9 +1,11 @@
 
 # bridges
 
-## Variable
+## Variables
 
-**bridges** is a list of dicts, each dict configures a bridge. This example configures one bridge:
+**bridges** should be specified in `host_vars` as it contains interface names and IP adresses. There are no `defaults`.
+
+`bridges` is a list of dicts, each dict configures a bridge. This example configures one bridge:
 
 ```
 bridges:

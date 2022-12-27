@@ -14,14 +14,16 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
     * there a is *DEFAULT* client config provided (details to follow) as fallback.
 * There is no support for multiple openvpn servers on the same host.
 
-** WARNING ** work in progress, do not (yet) use!
+**WARNING** work in progress, do not (yet) use!
 
 ## Variables
 
 To be set in `host_vars`:
 
+* `openvpn_server_ip`: e.g. 10.8.0.0
+* `openvpn_server_mask`: e.g. 255.255.255.0
 * `openvpn_server_name`: Currently used for systemd service name only
-* Four pointers to crypto files on the **ansible host**:
+* Four pointers to crypto files on the **ansible host** (these files must be present to run ansible, but the content is only used when the file is not present on the target yet).
     * `openvpn_dhfile_source`, e.g. `~/vpnsecrets/dh.pem`
     * `openvpn_cafile_source`: e.g. `~/vpnsecrets/ca.crt`
     * `openvpn_certfile_source`: e.g. `~/vpnsecrets/issued/server.crt`
@@ -29,8 +31,6 @@ To be set in `host_vars`:
 * Provided in `defaults`, can be overriden in `host_vars`
     * `openvpn_port`: 1194
     * `openvpn_proto`: udp
-    * `openvpn_server_ip`: 10.8.0.0
-    * `openvpn_server_mask`: 255.255.255.0
     * `openvpn_verb`: 4
     * `openvpn_script_security`: 2
     * `openvpn_client_config_dir`: clientconfig
@@ -43,5 +43,3 @@ To be set in `host_vars`:
 There are much bigger ansible roles supporting openvpn out there.
 * [Rob's role](https://github.com/robertdebock/ansible-role-openvpn) is nice, but does not give me the control of the network settings I need.
 * [This role](https://github.com/kyl191/ansible-role-openvpn) seems quite complete, but I was unsure how far I manage to migrate my old setup to this setup. Maybe I should have a look again...
-
-

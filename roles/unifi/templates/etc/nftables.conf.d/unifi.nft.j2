@@ -1,7 +1,7 @@
 {% for set in nft_unifi %}
-## Set {{ set.name }}_ports
+## Set {{ set.name }}_dports
 {% for port in set.ports %}
-add element inet filter {{ set.name }}_ports { {{ port }} }
+add element inet filter {{ set.name }}_dports { {{ port }} }
 {% endfor %}
 
 {% endfor %}

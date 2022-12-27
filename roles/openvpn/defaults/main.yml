@@ -1,8 +1,6 @@
 
 openvpn_port: 1194
 openvpn_proto: udp
-openvpn_server_ip: 10.8.0.0
-openvpn_server_mask: 255.255.255.0
 openvpn_verb: 4
 openvpn_script_security: 2
 openvpn_client_config_dir: clientconfig
