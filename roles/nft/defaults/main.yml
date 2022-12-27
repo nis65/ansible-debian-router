@@ -1,5 +1,5 @@
 
-nft_local_traffic: 
+nft_base_dports:
   - name: output_tcp
     ports:
       - "53"

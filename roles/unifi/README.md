@@ -23,20 +23,20 @@ nft_unifi:
 creates `/etc/nftables.conf.d/unifi.nft` with the following content:
 
 ```
-## Set input_downstream_tcp_ports
-add element inet filter input_downstream_tcp_ports { 8443 }
+## Set input_downstream_tcp_dports
+add element inet filter input_downstream_tcp_dports { 8443 }
 
-## Set input_mgmt_tcp_ports
-add element inet filter input_mgmt_tcp_ports { 8080 }
+## Set input_mgmt_tcp_dports
+add element inet filter input_mgmt_tcp_dports { 8080 }
 
-## Set input_mgmt_udp_ports
-add element inet filter input_mgmt_udp_ports { 3478, 10001 }
+## Set input_mgmt_udp_dports
+add element inet filter input_mgmt_udp_dports { 3478, 10001 }
 ```
 
 which will turn up in `nft list rules`:
 
 ```
-        set input_downstream_tcp_ports {
+        set input_downstream_tcp_dports {
                 type inet_service
                 flags interval
                 elements = { 8443 }
@@ -45,7 +45,7 @@ which will turn up in `nft list rules`:
 ```
 
 ```
-        set input_mgmt_tcp_ports {
+        set input_mgmt_tcp_dports {
                 type inet_service
                 flags interval
                 elements = { 8080 }
@@ -54,7 +54,7 @@ which will turn up in `nft list rules`:
 ```
 
 ```
-        set input_mgmt_udp_ports {
+        set input_mgmt_udp_dports {
                 type inet_service
                 flags interval
                 elements = { 3478, 10001 }

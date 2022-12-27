@@ -3,7 +3,9 @@
 
 ## Variable
 
-**vlanifs** is a list of dicts, each dict configures a vlan interface. This example configures vlan `700` on top of `br0`:
+**vlanifs** should be specified in `host_vars` as it contains interface names and IP adresses. There are no `defaults`.
+
+`vlanifs` is a list of dicts, each dict configures a vlan interface. This example configures vlan `700` on top of `br0`:
 
 
 ```

@@ -9,20 +9,20 @@ add set inet filter downstream_interfaces { type iface_index; }
 add element inet filter downstream_interfaces { {{ iface }} }
 {% endfor %}
 
-add set inet filter input_tcp_ports { type inet_service; flags interval; }
-add set inet filter input_udp_ports { type inet_service; flags interval; }
-add set inet filter output_tcp_ports { type inet_service; flags interval; }
-add set inet filter output_udp_ports { type inet_service; flags interval; }
+add set inet filter input_tcp_dports { type inet_service; flags interval; }
+add set inet filter input_udp_dports { type inet_service; flags interval; }
+add set inet filter output_tcp_dports { type inet_service; flags interval; }
+add set inet filter output_udp_dports { type inet_service; flags interval; }
 
-add set inet filter input_downstream_tcp_ports { type inet_service; flags interval; }
-add set inet filter input_downstream_udp_ports { type inet_service; flags interval; }
-add set inet filter output_downstream_tcp_ports { type inet_service; flags interval; }
-add set inet filter output_downstream_udp_ports { type inet_service; flags interval; }
+add set inet filter input_downstream_tcp_dports { type inet_service; flags interval; }
+add set inet filter input_downstream_udp_dports { type inet_service; flags interval; }
+add set inet filter output_downstream_tcp_dports { type inet_service; flags interval; }
+add set inet filter output_downstream_udp_dports { type inet_service; flags interval; }
 
-add set inet filter input_mgmt_tcp_ports { type inet_service; flags interval; }
-add set inet filter input_mgmt_udp_ports { type inet_service; flags interval; }
-add set inet filter output_mgmt_tcp_ports { type inet_service; flags interval; }
-add set inet filter output_mgmt_udp_ports { type inet_service; flags interval; }
+add set inet filter input_mgmt_tcp_dports { type inet_service; flags interval; }
+add set inet filter input_mgmt_udp_dports { type inet_service; flags interval; }
+add set inet filter output_mgmt_tcp_dports { type inet_service; flags interval; }
+add set inet filter output_mgmt_udp_dports { type inet_service; flags interval; }
 
 #### chains for application rules
 
@@ -38,17 +38,17 @@ add rule  inet filter input meta l4proto      icmp counter accept comment "input
 add rule  inet filter input meta l4proto ipv6-icmp counter accept comment "input icmpv6"
 add rule  inet filter input ct state established,related counter accept comment "input all returns"
 # incoming connects allowed on all interfaces
-add rule  inet filter input tcp dport @input_tcp_ports ct state new counter accept comment "input tcp"
-add rule  inet filter input tcp dport @input_udp_ports ct state new counter accept comment "input udp"
+add rule  inet filter input tcp dport @input_tcp_dports ct state new counter accept comment "input tcp"
+add rule  inet filter input tcp dport @input_udp_dports ct state new counter accept comment "input udp"
 # incoming connects allowed on upstream interface
 add rule  inet filter input iif {{ nft_upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
 # incoming connects allowed on downstream interfaces
-add rule  inet filter input iif @downstream_interfaces tcp dport @input_downstream_tcp_ports counter accept comment "input downstream tcp"
-add rule  inet filter input iif @downstream_interfaces udp dport @input_downstream_udp_ports counter accept comment "input downstream udp"
+add rule  inet filter input iif @downstream_interfaces tcp dport @input_downstream_tcp_dports counter accept comment "input downstream tcp"
+add rule  inet filter input iif @downstream_interfaces udp dport @input_downstream_udp_dports counter accept comment "input downstream udp"
 {% if nft_mgmt_interface is defined -%}
 # incoming connects allowed on mgmt interface
-add rule  inet filter input iif {{ nft_mgmt_interface }} tcp dport @input_mgmt_tcp_ports counter accept comment "input mgmt tcp"
-add rule  inet filter input iif {{ nft_mgmt_interface }} udp dport @input_mgmt_udp_ports counter accept comment "input mgmt udp"
+add rule  inet filter input iif {{ nft_mgmt_interface }} tcp dport @input_mgmt_tcp_dports counter accept comment "input mgmt tcp"
+add rule  inet filter input iif {{ nft_mgmt_interface }} udp dport @input_mgmt_udp_dports counter accept comment "input mgmt udp"
 {% endif -%}
 
 # jump to application rules
@@ -65,14 +65,14 @@ add rule  inet filter output meta l4proto      icmp counter accept comment "outp
 add rule  inet filter output meta l4proto ipv6-icmp counter accept comment "output icmpv6"
 add rule  inet filter output ct state established, related counter accept comment "output all returns"
 # outgoing connects allowed on all interfaces
-add rule  inet filter output tcp dport @output_tcp_ports ct state new counter accept comment "output tcp"
-add rule  inet filter output udp dport @output_udp_ports ct state new counter accept comment "output udp"
+add rule  inet filter output tcp dport @output_tcp_dports ct state new counter accept comment "output tcp"
+add rule  inet filter output udp dport @output_udp_dports ct state new counter accept comment "output udp"
 add rule  inet filter output ip protocol igmp counter accept comment "output igmp"
 # outgoing connects allowed on upstream interface
 add rule  inet filter output oif {{ nft_upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
 # outgoing connects allowed on downstream interfaces
-add rule  inet filter output oif @downstream_interfaces tcp dport @output_downstream_tcp_ports counter accept comment "output downstream tcp"
-add rule  inet filter output oif @downstream_interfaces udp dport @output_downstream_udp_ports counter accept comment "output downstream udp"
+add rule  inet filter output oif @downstream_interfaces tcp dport @output_downstream_tcp_dports counter accept comment "output downstream tcp"
+add rule  inet filter output oif @downstream_interfaces udp dport @output_downstream_udp_dports counter accept comment "output downstream udp"
 
 # jump to application rules
 add rule  inet filter output counter jump output_apprules comment "output app rules"
