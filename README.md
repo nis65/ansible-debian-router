@@ -19,17 +19,19 @@ these roles:
 
 ### base infrastructure
 
-The **nft** role installs some configuration files to configure
-the firewall on your router. It configures  nftables natively on your
-router (no `firewalld` or other framework).  It features a simple plugin
+* **nft**: install some configuration files to configure
+the firewall on your router. nftables is configured natively,
+no `firewalld` or other framework.  It features a simple file drop in
 mechanism so that later roles can add a file with additional settings
 without interfering with the core config file or with each other. The
-role makes use of that mechanism to configure some "always open" ports.
+`nft` role makes use of that mechanism to configure some "always open" ports
+itself.
 
-The **routing** role enables routing (IPv6 not yet implemented).
+* **routing**: enables routing (IPv6 not yet implemented).
 
-The **dnsmasq** role installs and configures `dnsmasq` that is used
-both as local dhcp and dns server. Provides some `nft` rules.
+* **dnsmasq**: installs and configures `dnsmasq` providing both
+a dhcp and dns server for the downstream interfaces.
+Provides a `nft` drop in file.
 
 ### applications
 
@@ -47,9 +49,9 @@ both as local dhcp and dns server. Provides some `nft` rules.
 
 ## Variables
 
-The variables of the roles can be classified into two types
+The variables of the roles are classified into two types:
 
-* *host_vars*: All settings that are likely to be different from router to router, in `host_vars/mimas4.yml`:
+* *host_vars*: All settings that are likely to be different from router to router, e.g. `host_vars/mimas4.yml`:
   * ip adresses
   * virtual interface configuration (bridges, vlans)
 * *defaults*: Settings that are unlikely to be change but it still nice to have them parametrized. These are in `roles/*/defaults/main.yml`
@@ -68,5 +70,3 @@ Why not use some prebuilt open firewall distribution?
 * I like to stay up to date how things are done "the debian way"
 * I want to practice ansible
 * I like debian
-
-
