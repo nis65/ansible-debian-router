@@ -14,7 +14,7 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
     * there a is *DEFAULT* client config provided (details to follow) as fallback.
 * There is no support for multiple openvpn servers on the same host.
 
-** WARNING ** work in progress, do not (yet) use!
+**WARNING** work in progress, do not (yet) use!
 
 ## Variables
 
@@ -43,5 +43,3 @@ To be set in `host_vars`:
 There are much bigger ansible roles supporting openvpn out there.
 * [Rob's role](https://github.com/robertdebock/ansible-role-openvpn) is nice, but does not give me the control of the network settings I need.
 * [This role](https://github.com/kyl191/ansible-role-openvpn) seems quite complete, but I was unsure how far I manage to migrate my old setup to this setup. Maybe I should have a look again...
-
-
