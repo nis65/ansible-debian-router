@@ -17,7 +17,7 @@ these roles:
 * **bridges**: configure bridges on top of other interfaces
 * **vlanifs**: configure vlans on top of other interfaces
 
-### base infrastructure
+### nftables filter and routing
 
 * **nft**: install some configuration files to configure
 the firewall on your router. nftables is configured natively,
