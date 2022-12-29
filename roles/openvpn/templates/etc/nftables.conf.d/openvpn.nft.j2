@@ -1,0 +1,35 @@
+## build rules for vpn server (encrypted traffic)
+# build set of vpn_outer_interfaces
+add set inet filter vpn_server_interfaces { type iface_index; }
+
+{% for iface in openvpn_server_interfaces %}
+add element inet filter vpn_server_interfaces { {{ iface }} }
+{% endfor %}
+
+# Stateless rules for base vpn traffic
+add rule inet filter input_apprules  iif @vpn_server_interfaces udp dport { {{ openvpn_port }} } counter accept comment "input vpn"
+add rule inet filter output_apprules oif @vpn_server_interfaces udp sport { {{ openvpn_port }} } counter accept comment "output vpn"
+
+## build rules for vpn clients (decrypted traffic) to local services
+# Stateful input rule to enable vpn clients to use the local dns server, ssh and the unifi web interface
+add rule inet filter input_apprules iif tun0 udp dport { 53 } ct state new counter accept comment "input vpn client dns udp"
+add rule inet filter input_apprules iif tun0 tcp dport { 22, 53, 8443 } ct state new counter accept comment "input vpn client dns tcp"
+
+## build different forward rules for different vpn client types
+# * remotely managed machines, only needed traffic is FROM local networks (including other vpn clients) TO their ssh server.
+#   as rule makes sense for all vpn clients, no further restriction
+add rule inet filter forward_apprules oif tun0 tcp dport { 22, 2222 } ct state new counter accept comment "forward ssh to vpn client"
+# * remote clients with access FROM them TO one or more local services
+#   * ssh (ssh server)
+add rule inet filter forward_apprules iif tun0 tcp dport { 22, 2222 } ct state new counter accept comment "forward ssh from vpn client"
+#   * disk (nbd server)
+#   * file (smb server)
+#   * music (mpd/snapcast)
+#   * telephony (sip server)
+#   * web management (ucs systems)
+#   * ldap (ucs ldap)
+#   * mailbox (imaps server)
+
+
+
+

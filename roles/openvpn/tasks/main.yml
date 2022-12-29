@@ -5,6 +5,20 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Add nft rules to accept VPN connections
+  ansible.builtin.template:
+    src: templates/etc/nftables.conf.d/openvpn.nft.j2
+    dest: /etc/nftables.conf.d/openvpn.nft
+    backup: no
+  register: openvpnnftconfig
+
+- name: Enable / Restart nftables when config files changed
+  ansible.builtin.systemd:
+    name: "nftables.service"
+    state: restarted
+    enabled: yes
+  when: openvpnnftconfig.changed
+
 - name: Install openvpn
   ansible.builtin.apt:
     name: openvpn
