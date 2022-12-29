@@ -10,6 +10,8 @@ add element inet filter vpn_server_interfaces { {{ iface }} }
 add rule inet filter input_apprules  iif @vpn_server_interfaces udp dport { {{ openvpn_port }} } counter accept comment "input vpn"
 add rule inet filter output_apprules oif @vpn_server_interfaces udp sport { {{ openvpn_port }} } counter accept comment "output vpn"
 
+add set inet filter vpn_local_service_ports { type inet_service; flags interval; }
+
 ## build rules for vpn clients (decrypted traffic) to local services
 # Stateful input rule to enable vpn clients to use the local dns server, ssh and the unifi web interface
 add rule inet filter input_apprules iif tun0 udp dport { 53 } ct state new counter accept comment "input vpn client dns udp"
