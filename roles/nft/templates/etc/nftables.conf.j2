@@ -9,10 +9,19 @@ define def_downstream_ifs = { {% for iface in nft_downstream_interfaces %}{{ ifa
 add set inet filter downstream_interfaces { type iface_index; }
 add element inet filter downstream_interfaces $def_downstream_ifs
 
+add set inet filter local_interfaces { type iface_index; }
+add element inet filter local_interfaces $def_downstream_ifs
+add element inet filter local_interfaces { {{ nft_upstream_interface }} }
+
 add set inet filter input_tcp_dports { type inet_service; flags interval; }
 add set inet filter input_udp_dports { type inet_service; flags interval; }
 add set inet filter output_tcp_dports { type inet_service; flags interval; }
 add set inet filter output_udp_dports { type inet_service; flags interval; }
+
+add set inet filter input_local_tcp_dports { type inet_service; flags interval; }
+add set inet filter input_local_udp_dports { type inet_service; flags interval; }
+add set inet filter output_local_tcp_dports { type inet_service; flags interval; }
+add set inet filter output_local_udp_dports { type inet_service; flags interval; }
 
 add set inet filter input_downstream_tcp_dports { type inet_service; flags interval; }
 add set inet filter input_downstream_udp_dports { type inet_service; flags interval; }
@@ -41,6 +50,9 @@ add rule  inet filter input ct state established,related counter accept comment 
 # incoming connects allowed on all interfaces
 add rule  inet filter input tcp dport @input_tcp_dports ct state new counter accept comment "input tcp"
 add rule  inet filter input tcp dport @input_udp_dports ct state new counter accept comment "input udp"
+# incoming connects allowed on all local interfaces
+add rule  inet filter input iif @local_interfaces tcp dport @input_local_tcp_dports ct state new counter accept comment "input tcp"
+add rule  inet filter input iif @local_interfaces tcp dport @input_local_udp_dports ct state new counter accept comment "input udp"
 # incoming connects allowed on upstream interface
 add rule  inet filter input iif {{ nft_upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
 # incoming connects allowed on downstream interfaces
@@ -80,9 +92,6 @@ add rule  inet filter output counter log prefix "output chain " comment "output 
 
 #### FORWARD CHAIN
 
-add set inet filter local_interfaces { type iface_index; }
-add element inet filter local_interfaces $def_downstream_ifs
-add element inet filter local_interfaces { {{ nft_upstream_interface }} }
 add chain inet filter forward { type filter hook forward priority filter; policy drop; }
 add rule  inet filter forward counter comment "forward all"
 add rule  inet filter forward meta l4proto      icmp counter accept comment "forward icmpv4"

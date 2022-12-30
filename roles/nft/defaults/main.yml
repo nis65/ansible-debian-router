@@ -10,6 +10,6 @@ nft_base_dports:
     ports:
       - "53"
       - "123"
-  - name: input_tcp
+  - name: input_local_tcp
     ports:
       - "22"
