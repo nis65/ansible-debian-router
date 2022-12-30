@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+IPPSOURCE=/var/log/openvpn/ipp.txt
+NFTDEST=/etc/nftables.conf.d/clients.openvpn
+
+cat $IPPSOURCE | while IFS=',' read name ipv4 ipv6
+do
+  echo "define ${name}_v4 = { ${ipv4}, }"
+  echo "#define ${name}_v6 = { ${ipv6}, }"
+done > $NFTDEST
+

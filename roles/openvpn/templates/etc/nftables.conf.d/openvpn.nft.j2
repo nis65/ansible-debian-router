@@ -17,8 +17,9 @@ add rule inet filter forward_apprules oif tun0 tcp dport { 22, 2222 } ct state n
 # map vpn client names (from certificates)
 #   TODO: should be created dynamically from /var/log/openvpn/ipp.txt, retriggered by each successful openvpn connect
 
-define lambda = { 10.8.0.2, 10.8.0.50, }
-define zeta = { 10.8.0.99 }
+include "/etc/nftables.conf.d/clients.openvpn"
+# debug, should go away
+define zeta_v4 = { 10.8.0.99 }
 
 # sets for selected targets in local networks
 add set inet filter smb_targets { type ipv4_addr ; }
