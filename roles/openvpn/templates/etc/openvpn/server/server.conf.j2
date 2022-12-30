@@ -14,6 +14,9 @@ cipher AES-256-CBC
 persist-key
 persist-tun
 status /var/log/openvpn/openvpn-status.log
+{% for network in openvpn_pushroutes %}
+push "route {{ network.address }} {{ network.mask }}"
+{% endfor %}
 verb {{ openvpn_verb }}
 explicit-exit-notify 1
 # Added as I prefer it like this

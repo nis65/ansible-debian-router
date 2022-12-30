@@ -20,7 +20,8 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
 
 To be set in `host_vars`:
 
-* `openvpn_server_ip`: e.g. 10.8.0.0
+* `openvpn_server_interfaces`: a list of interfaces where connects are accepted. Usually at least the upstream interface, e.g. `enp1s0`.
+* `openvpn_server_ip`: subnet where vpn clients get their ip from, e.g. 10.8.0.0
 * `openvpn_server_mask`: e.g. 255.255.255.0
 * `openvpn_server_name`: Currently used for systemd service name only
 * Four pointers to crypto files on the **ansible host** (these files must be present to run ansible, but the content is only used when the file is not present on the target yet).
@@ -28,15 +29,49 @@ To be set in `host_vars`:
     * `openvpn_cafile_source`: e.g. `~/vpnsecrets/ca.crt`
     * `openvpn_certfile_source`: e.g. `~/vpnsecrets/issued/server.crt`
     * `openvpn_keyfile_source`: e.g. `~/vpnsecrets/private/server.key`
-* Provided in `defaults`, can be overriden in `host_vars`
-    * `openvpn_port`: 1194
-    * `openvpn_proto`: udp
-    * `openvpn_verb`: 4
-    * `openvpn_script_security`: 2
-    * `openvpn_client_config_dir`: clientconfig
-* **TODO**: nftables integration
-    * Base VPN port: only downstream, I guess?
-    * nft maps to make individual rules for individual hosts?
+* `openvpn_pushroutes`: a list of dicts. If you want to have any communication between the vpn clients and your local networks (independent of the direction of the communication initiation), you will have to push the subnets of your local networks to the openvpn clients.
+~~~
+openvpn_pushroutes:
+  - address: 172.30.0.0
+    mask: 255.255.254.0
+  - address: 172.27.0.1
+    mask: 255.255.255.0
+~~~
+* `openvpn_nft_targets_smb`: a list of target ip adresses of `smb` servers in your local network you want give access to at least one vpn client
+* `openvpn_nft_targets_imaps`: a list of target ip adresses of `imaps` servers in your local network you want give access to at least one vpn client
+* `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. **WARNING** The client names **must** be `define`d  in that jinja template (e.g. `define zeta = { 10.8.0.99 }`), otherwise an invalid nftables configuration is generated. **TODO** build a a script that parses the openvpn persistent ip database and produces an includable file that contains all needed defines.
+~~~
+openvpn_nft_client_rules:
+  - name: localhost_dns
+    clients:
+      - lambda
+  - name: localhost_ssh
+    clients:
+      - lambda
+  - name: localhost_unifi
+    clients:
+      - lambda
+      - zeta
+  - name: localnet_ssh
+    clients:
+      - lambda
+  - name: localnet_smb
+    clients:
+      - lambda
+  - name: localnet_music
+    clients:
+      - lambda
+  - name: localnet_imaps
+    clients:
+      - lambda
+~~~
+
+Provided in `defaults`, can be overriden in `host_vars`
+* `openvpn_port`: 1194
+* `openvpn_proto`: udp
+* `openvpn_verb`: 4
+* `openvpn_script_security`: 2
+* `openvpn_client_config_dir`: clientconfig
 
 ## Implementation notes
 
