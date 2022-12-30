@@ -71,3 +71,32 @@ openvpn_dhfile_source: ~/vpnsecrets/dh.pem
 openvpn_cafile_source: ~/vpnsecrets/ca.crt
 openvpn_certfile_source: ~/vpnsecrets/issued/server.crt
 openvpn_keyfile_source: ~/vpnsecrets/private/server.key
+
+openvpn_nft_targets_smb:
+  - 172.30.0.126
+openvpn_nft_targets_imaps:
+  - 172.30.0.126
+
+openvpn_nft_client_rules:
+  - name: localhost_dns
+    clients:
+      - lambda
+  - name: localhost_ssh
+    clients:
+      - lambda
+  - name: localhost_unifi
+    clients:
+      - lambda
+      - zeta
+  - name: localnet_ssh
+    clients:
+      - lambda
+  - name: localnet_smb
+    clients:
+      - lambda
+  - name: localnet_music
+    clients:
+      - lambda
+  - name: localnet_imaps
+    clients:
+      - lambda
