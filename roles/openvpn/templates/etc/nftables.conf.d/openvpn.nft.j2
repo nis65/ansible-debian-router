@@ -10,17 +10,36 @@ add element inet filter vpn_server_interfaces { {{ iface }} }
 add rule inet filter input_apprules  iif @vpn_server_interfaces udp dport { {{ openvpn_port }} } counter accept comment "input vpn"
 add rule inet filter output_apprules oif @vpn_server_interfaces udp sport { {{ openvpn_port }} } counter accept comment "output vpn"
 
-add set inet filter vpn_local_service_ports { type inet_service; flags interval; }
+# ??? add set inet filter vpn_local_service_ports { type inet_service; flags interval; }
 
 ## build rules for vpn clients (decrypted traffic) to local services
+# ALL vpn clients are reachable via ssh
+add rule inet filter forward_apprules oif tun0 tcp dport { 22, 2222 } ct state new counter accept comment "forward ssh to vpn client"
+
+# map vpn client names (from certificates)
+#   TODO: should be created dynamically from /var/log/openvpn/ipp.txt, retriggered by each successful openvpn connect
+define lambda = { 10.8.0.2 }
+# create empty source IP sets for all rules
+add set inet filter from_vpn_to_localnet_dns { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_ssh { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_nbd { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_file { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_music { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_sip { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_imap { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_ldap { type ipv4_addr ; }
+# map client names to the source ip sets
+
+add element inet filter from_vpn_to_localnet_dns { lambda }
+
 # Stateful input rule to enable vpn clients to use the local dns server, ssh and the unifi web interface
 add rule inet filter input_apprules iif tun0 udp dport { 53 } ct state new counter accept comment "input vpn client dns udp"
+add rule inet filter input_apprules iif tun0 tcp dport { 53 } ct state new counter accept comment "input vpn client dns tcp"
+
 add rule inet filter input_apprules iif tun0 tcp dport { 22, 53, 8443 } ct state new counter accept comment "input vpn client dns tcp"
 
 ## build different forward rules for different vpn client types
 # * remotely managed machines, only needed traffic is FROM local networks (including other vpn clients) TO their ssh server.
-#   as rule makes sense for all vpn clients, no further restriction
-add rule inet filter forward_apprules oif tun0 tcp dport { 22, 2222 } ct state new counter accept comment "forward ssh to vpn client"
 # * remote clients with access FROM them TO one or more local services
 #   * ssh (ssh server)
 add rule inet filter forward_apprules iif tun0 tcp dport { 22, 2222 } ct state new counter accept comment "forward ssh from vpn client"

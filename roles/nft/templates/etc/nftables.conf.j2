@@ -4,10 +4,10 @@ flush ruleset
 
 add table inet filter
 
+define def_downstream_ifs = { {% for iface in nft_downstream_interfaces %}{{ iface }}, {% endfor %} }
+
 add set inet filter downstream_interfaces { type iface_index; }
-{% for iface in nft_downstream_interfaces %}
-add element inet filter downstream_interfaces { {{ iface }} }
-{% endfor %}
+add element inet filter downstream_interfaces $def_downstream_ifs
 
 add set inet filter input_tcp_dports { type inet_service; flags interval; }
 add set inet filter input_udp_dports { type inet_service; flags interval; }
@@ -79,14 +79,18 @@ add rule  inet filter output counter jump output_apprules comment "output app ru
 add rule  inet filter output counter log prefix "output chain " comment "output log drop"
 
 #### FORWARD CHAIN
+
+add set inet filter local_interfaces { type iface_index; }
+add element inet filter local_interfaces $def_downstream_ifs
+add element inet filter local_interfaces { {{ nft_upstream_interface }} }
 add chain inet filter forward { type filter hook forward priority filter; policy drop; }
 add rule  inet filter forward counter comment "forward all"
 add rule  inet filter forward meta l4proto      icmp counter accept comment "forward icmpv4"
 add rule  inet filter forward meta l4proto ipv6-icmp counter accept comment "forward icmpv6"
 add rule  inet filter forward ct state established, related counter accept comment "forward all returns"
-# add packets allowed from downstream interfaces (no restrictions at all, separate rules for stats only, stateful)
-add rule  inet filter forward iif @downstream_interfaces ip protocol tcp ct state new counter accept comment "forward all new tcp"
-add rule  inet filter forward iif @downstream_interfaces ip protocol udp ct state new counter accept comment "forward all new udp"
+# add packets allowed from downstream interfaces to downstream and upstream interfaces (aka local_interfaces)
+add rule  inet filter forward iif @downstream_interfaces oif @local_interfaces ip protocol tcp ct state new counter accept comment "forward all new tcp"
+add rule  inet filter forward iif @downstream_interfaces oif @local_interfaces ip protocol udp ct state new counter accept comment "forward all new udp"
 # jump to application rules
 add rule  inet filter forward counter jump forward_apprules comment "forward app rules"
 # drop all other packets
