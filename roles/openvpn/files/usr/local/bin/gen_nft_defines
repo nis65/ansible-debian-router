@@ -32,10 +32,11 @@ done > $NFTDEST
 
 NEWSUM=$( md5sum $NFTDEST )
 
-if [[ "$OLDSUM" != "$NEWSUM" ]]
+if [[ "$OLDSUM" == "$NEWSUM" ]]
 then
   $LOGGER "no change $OLDSUM, doing nothing"
 else
+  $LOGGER "old sum $OLDSUM"
   $LOGGER "new sum $NEWSUM, restarting nftables"
   systemctl restart nftables
   $LOGGER "done"

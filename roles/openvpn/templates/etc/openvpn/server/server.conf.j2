@@ -8,7 +8,7 @@ cert server.crt
 key server.key  # This file should be kept secret
 dh dh2048.pem
 server {{ openvpn_server_ip }} {{ openvpn_server_mask }}
-ifconfig-pool-persist /var/log/openvpn/ipp.txt
+ifconfig-pool-persist /var/log/openvpn/ipp.txt {{ openvpn_write_ipp_sec }}
 keepalive 10 120
 cipher AES-256-CBC
 persist-key

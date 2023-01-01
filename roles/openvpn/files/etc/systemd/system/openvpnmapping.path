@@ -2,7 +2,7 @@
 Description=Watchout for new openvpn clients
 
 [Path]
-PathChanged=/var/log/openvpn/ipp.txt
+PathModified=/var/log/openvpn/ipp.txt
 
 [Install]
 WantedBy=multi-user.target

@@ -70,6 +70,7 @@ Provided in `defaults`, can be overriden in `host_vars`
 * `openvpn_port`: 1194
 * `openvpn_proto`: udp
 * `openvpn_verb`: 4
+* `openvpn_write_ipp_sec`: 60
 * `openvpn_script_security`: 2
 * `openvpn_client_config_dir`: clientconfig
 

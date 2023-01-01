@@ -32,10 +32,6 @@
     state: started
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: FAIL
-  ansible.builtin.fail:
-    msg: "STOP"
-
 - name: Add nft rules to accept VPN connections
   ansible.builtin.template:
     src: templates/etc/nftables.conf.d/openvpn.nft.j2
