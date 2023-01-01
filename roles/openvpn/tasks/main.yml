@@ -5,6 +5,23 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Create clientconfig dir
+  ansible.builtin.file:
+    path: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig
+    state: directory
+    mode: 0755
+
+- name: Add default client config file
+  ansible.builtin.template:
+    src: templates/etc/openvpn/server/clientconfig/DEFAULT.j2
+    dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/DEFAULT
+
+- name: Add client config file with dns options
+  ansible.builtin.template:
+    src: templates/etc/openvpn/server/clientconfig/dnsoptions.j2
+    dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/{{ item }}
+  loop: "{{ openvpn_push_dns.clientlist }}"
+
 - name: Add script to generate nft mapping from vpn static ips
   ansible.builtin.copy:
     src: files/usr/local/bin/gen_nft_defines

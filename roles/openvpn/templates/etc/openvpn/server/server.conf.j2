@@ -22,8 +22,8 @@ explicit-exit-notify 1
 # Added as I prefer it like this
 topology subnet
 multihome
-#script-security {{ openvpn_script_security }}
-#client-config-dir {{ openvpn_client_config_dir }}
+script-security {{ openvpn_script_security }}
+client-config-dir {{ openvpn_server_name }}_clientconfig
 user nobody
 group nogroup
 # use with "socat - /var/run/openvpn.socket"

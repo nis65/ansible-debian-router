@@ -37,6 +37,17 @@ openvpn_pushroutes:
   - address: 172.27.0.1
     mask: 255.255.255.0
 ~~~
+* `openvpn_push_dns`: the configuration which clients get dns information pushed and what information they get pushed
+~~~
+openvpn_push_dns:
+  clientlist:
+    - nicolas-mobile
+  dnsserverips:
+    - 10.8.0.1
+  dnsdomains:
+    - mydomain.net
+    - myotherdomain.ch
+~~~
 * `openvpn_nft_targets_smb`: a list of target ip adresses of `smb` servers in your local network you want give access to at least one vpn client
 * `openvpn_nft_targets_imaps`: a list of target ip adresses of `imaps` servers in your local network you want give access to at least one vpn client
 * `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. **WARNING** The client names **must** be `define`d  in that jinja template (e.g. `define zeta = { 10.8.0.99 }`), otherwise an invalid nftables configuration is generated. **TODO** build a a script that parses the openvpn persistent ip database and produces an includable file that contains all needed defines.
