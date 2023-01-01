@@ -7,12 +7,12 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
     * if they are present on the target host, nothing is done (existing file is never overwritten, even when it's different).
     * if they are missing, they are copied from the ansible host (see variable settings below). If you want to force a copy, just delete them on the target host before running the playbook.
 * Support for **client-config-dir** implemented because I have different kinds of VPN clients:
-    * most clients don't want a default route, but for some I want to switch it on (on server side), e.g. for my laptop abroad.
-    * some want to access services, e.g. the file share or the music stream. These get my internal DNS-Server pushed.
-    * some only need a network connection to enable remote management even when they are behind NAT. In order to minimize the impact of the VPN on the client, they don't get a DNS-Server pushed.
+    * most clients don't want a default route, but for some I want to switch it on (on server side) temporarily, e.g. for my laptop abroad. Changed client configs are reread upon every fresh connect, so there is no need to restart openvpn after changes there.
+    * some want to access services, e.g. the file share or the music stream. These get my internal DNS-Server and -Domains pushed.
+    * some only need a network connection  so that I can remotely manage them even when they are behind NAT. In order to minimize the impact of the VPN on the client, they don't get a DNS-Server pushed.
     * if there is file in this directory whose name matches the name in the certificate, this will be executed.
-    * there a is *DEFAULT* client config provided (details to follow) as fallback.
-* There is no support for multiple openvpn servers on the same host.
+    * there a is *DEFAULT* client config provided if there are options you want to push to all clients except the ones that do not get dns information pushed.
+* There is no support for multiple openvpn servers on the same host in this role.
 
 **WARNING** work in progress, do not (yet) use!
 
@@ -50,31 +50,32 @@ openvpn_push_dns:
 ~~~
 * `openvpn_nft_targets_smb`: a list of target ip adresses of `smb` servers in your local network you want give access to at least one vpn client
 * `openvpn_nft_targets_imaps`: a list of target ip adresses of `imaps` servers in your local network you want give access to at least one vpn client
-* `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. **WARNING** The client names **must** be `define`d  in that jinja template (e.g. `define zeta = { 10.8.0.99 }`), otherwise an invalid nftables configuration is generated.
+* `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. 
+   * **WARNING** The client names **must** be `define`d  in that jinja template (e.g. `define zeta_v4 = { 10.8.0.99 }`), otherwise an invalid nftables configuration is generated.
 ~~~
 openvpn_nft_client_rules:
   - name: localhost_dns
     clients:
-      - lambda
+      - lambda_v4
   - name: localhost_ssh
     clients:
-      - lambda
+      - lambda_v4
   - name: localhost_unifi
     clients:
-      - lambda
-      - zeta
+      - lambda_v4
+      - zeta_v4
   - name: localnet_ssh
     clients:
-      - lambda
+      - lambda_v4
   - name: localnet_smb
     clients:
-      - lambda
+      - lambda_v4
   - name: localnet_music
     clients:
-      - lambda
+      - lambda_v4
   - name: localnet_imaps
     clients:
-      - lambda
+      - lambda_v4
 ~~~
 
 Provided in `defaults`, can be overriden in `host_vars`
