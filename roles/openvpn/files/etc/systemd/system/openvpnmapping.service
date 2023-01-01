@@ -1,0 +1,6 @@
+[Unit]
+Description=update nft for vpn clients
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/gen_nft_defines
