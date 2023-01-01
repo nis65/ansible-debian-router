@@ -5,6 +5,50 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
+- name: Create clientconfig dir
+  ansible.builtin.file:
+    path: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig
+    state: directory
+    mode: 0755
+
+- name: Add default client config file
+  ansible.builtin.template:
+    src: templates/etc/openvpn/server/clientconfig/DEFAULT.j2
+    dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/DEFAULT
+
+- name: Add client config file with dns options
+  ansible.builtin.template:
+    src: templates/etc/openvpn/server/clientconfig/dnsoptions.j2
+    dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/{{ item }}
+  loop: "{{ openvpn_push_dns.clientlist }}"
+
+- name: Add script to generate nft mapping from vpn static ips
+  ansible.builtin.copy:
+    src: files/usr/local/bin/gen_nft_defines
+    dest: /usr/local/bin/gen_nft_defines
+    backup: no
+    mode: "755"
+
+- name: Add systemd unit to call generate script
+  ansible.builtin.copy:
+    src: etc/systemd/system/openvpnmapping.service
+    dest: /etc/systemd/system/openvpnmapping.service
+    backup: no
+
+- name: Add systemd path unit to monitor new openvpn connects
+  ansible.builtin.copy:
+    src: etc/systemd/system/openvpnmapping.path
+    dest: /etc/systemd/system/openvpnmapping.path
+    backup: no
+
+- name: Activate monitoring of new openvpn connects
+  ansible.builtin.systemd:
+    name: "openvpnmapping.path"
+    enabled: yes
+    daemon_reload: yes
+    state: started
+  ignore_errors: "{{ ansible_check_mode }}"
+
 - name: Add nft rules to accept VPN connections
   ansible.builtin.template:
     src: templates/etc/nftables.conf.d/openvpn.nft.j2

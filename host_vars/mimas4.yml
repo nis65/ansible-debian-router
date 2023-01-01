@@ -73,6 +73,15 @@ openvpn_pushroutes:
   - address: 172.27.0.1
     mask: 255.255.255.0
 
+openvpn_push_dns:
+  clientlist:
+    - nicolas-mobile
+  dnsserverips:
+    - 10.8.0.1
+  dnsdomains:
+    - iselin.net
+    - isel.in
+
 openvpn_nft_targets_smb:
   - 172.30.0.126
 openvpn_nft_targets_imaps:
@@ -81,23 +90,25 @@ openvpn_nft_targets_imaps:
 openvpn_nft_client_rules:
   - name: localhost_dns
     clients:
-      - lambda
+      - lambda_v4
+      - nicolas-mobile_v4
   - name: localhost_ssh
     clients:
-      - lambda
+      - lambda_v4
+      - nicolas-mobile_v4
   - name: localhost_unifi
     clients:
-      - lambda
-      - zeta
+      - lambda_v4
+      - zeta_v4
   - name: localnet_ssh
     clients:
-      - lambda
+      - lambda_v4
   - name: localnet_smb
     clients:
-      - lambda
+      - lambda_v4
   - name: localnet_music
     clients:
-      - lambda
+      - lambda_v4
   - name: localnet_imaps
     clients:
-      - lambda
+      - lambda_v4

@@ -8,7 +8,7 @@ cert server.crt
 key server.key  # This file should be kept secret
 dh dh2048.pem
 server {{ openvpn_server_ip }} {{ openvpn_server_mask }}
-ifconfig-pool-persist /var/log/openvpn/ipp.txt
+ifconfig-pool-persist /var/log/openvpn/ipp.txt {{ openvpn_write_ipp_sec }}
 keepalive 10 120
 cipher AES-256-CBC
 persist-key
@@ -22,8 +22,8 @@ explicit-exit-notify 1
 # Added as I prefer it like this
 topology subnet
 multihome
-#script-security {{ openvpn_script_security }}
-#client-config-dir {{ openvpn_client_config_dir }}
+script-security {{ openvpn_script_security }}
+client-config-dir {{ openvpn_server_name }}_clientconfig
 user nobody
 group nogroup
 # use with "socat - /var/run/openvpn.socket"
