@@ -1,11 +1,11 @@
 #!/bin/bash
-STATUS=/tmp/last_update_afraid.txt
+STATUS=/tmp/latest_afraid_update.txt
 
 DEFAULTS=/etc/default/afraid
 . $DEFAULTS
 
 EXTIF={{ afraid_external_vpn_interface }}
-ALIAS={{ afraid_alias }}
+ALIAS={{ afraid_domain_name }}
 
 localip4=`LANG=C ip -4 a show dev $EXTIF | sed -ne "s|^ *inet \([\.0-9]*\)/.*$|\1|p"`
 dnsip4=`host -t a $ALIAS | awk '{ print $4}'`

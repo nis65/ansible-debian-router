@@ -58,7 +58,7 @@ dnsmasq_dhcp_ranges:
 # afraid role
 
 afraid_external_vpn_interface: enp1s0
-afraid_alias: is.n-e-t.name
+afraid_domain_name: is.n-e-t.name
 
 # openvpn role
 
