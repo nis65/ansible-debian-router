@@ -45,6 +45,8 @@ iface br0 inet static
 
 ## Implementation notes
 
+**WARNING**: Supplying a route to an gateway that is not on the local network will prevent `ifup` from bringing up `br0` properly. This prevents the network stack from properly booting and you can have strange issues...
+
 The playbook checks the live ip address of an already running bridge and restarts the bridge (`ifdown`/`ifup`) if they don't match to force the new address (or if the `bridges` file was changed). This should probably be implemented as handler.
 
 Cleanup when renaming/deleting bridges, adding/removing routes is not tested. You have been warned.
