@@ -12,4 +12,7 @@ iface {{ bridge.name }} inet static
     address {{ bridge.address }}
     netmask {{ bridge.netmask }}
     broadcast {{ bridge.broadcast }}
+    {% for route in bridge.routes %}up ip route add {{ route.target }} via {{ route.gw }}
+    down ip route del {{ route.target }} via {{ route.gw }}
+    {% endfor %}
 {% endfor %}
