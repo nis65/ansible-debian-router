@@ -32,10 +32,6 @@ nft_downstream_interfaces:
 
 dnsmasq_except_interface: enp1s0
 
-dnsmasq_dhcp_search_domain_names:
-  - iselin.ch
-  - iselin.net
-
 dnsmasq_other_servers:
   - name: UCS Domains
     domains:
@@ -44,6 +40,12 @@ dnsmasq_other_servers:
     serverips:
       - 172.25.0.10
       - 172.25.0.12
+
+dnsmasq_dhcp_domain: iselin.net
+
+dnsmasq_dhcp_search_domain_names:
+  - iselin.ch
+  - iselin.net
 
 dnsmasq_dhcp_staticips_source: ~/staticips
 

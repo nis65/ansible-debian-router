@@ -9,9 +9,11 @@ To be set in `host_vars`:
 
 * `dnsmasq_except_interface`: you don't want dnsmasq to serve the upstream interface, should be set to the same value as `nft_upstream_interface`. While DHCP is usually not desired on the vpn, DNS is. See the `nft` rules below.
 
-* `dnsmasq_dhcp_search_domain_names`: The domains you want to suggest the DHCP clients to search for.
-
 * `dnsmasq_other_servers`: I run a system with an internal domain and separate networks. This makes `dnsmasq` forward queries for such domains to the defined name servers.
+
+* `dnsmasq_dhcp_domain`: The domain name you want to have added automatically to all hostnames created from giving out dhcp leases.
+
+* `dnsmasq_dhcp_search_domain_names`: The domains you want to suggest the DHCP clients to search for.
 
 * `dnsmasq_dhcp_staticips_source`: Only copied to the target host when not present there. Is basically a reminder that this file exists but can be managed on the target host directly (does that make sense?). I manage e.g. the IP adress of my printer there.
 
