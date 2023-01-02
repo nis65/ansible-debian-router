@@ -15,6 +15,7 @@ server=/{{domain}}/{{ip}}
 {% endfor %}
 
 # DHCP part
+domain={{ dnsmasq_dhcp_domain }}
 
 # not supported by all clients
 dhcp-option=option:domain-search{% for domain in dnsmasq_dhcp_search_domain_names %},{{domain}}{% endfor %}

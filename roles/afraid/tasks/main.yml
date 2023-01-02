@@ -1,0 +1,36 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Create default file if not present
+  ansible.builtin.template: 
+    src: etc/default/afraid
+    dest: /etc/default/afraid
+    force: no
+
+- name: Create script file
+  ansible.builtin.template: 
+    src: usr/local/bin/update_afraid.sh
+    dest: /usr/local/bin/update_afraid.sh
+    mode: 0755
+
+- name: Create service file
+  ansible.builtin.copy:
+    src: etc/systemd/system/update-afraid.service
+    dest: /etc/systemd/system/update-afraid.service
+
+- name: Create timer file
+  ansible.builtin.copy:
+    src: etc/systemd/system/update-afraid.timer
+    dest: /etc/systemd/system/update-afraid.timer
+
+- name: Enable timer
+  ansible.builtin.systemd:
+    name: update-afraid.timer
+    daemon-reload: true
+    state: started
+    enabled: yes
+

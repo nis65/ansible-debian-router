@@ -6,12 +6,13 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
 * As the main use case for this role is migration from an existing installation, the key/certificate files are expected to exist:
     * if they are present on the target host, nothing is done (existing file is never overwritten, even when it's different).
     * if they are missing, they are copied from the ansible host (see variable settings below). If you want to force a copy, just delete them on the target host before running the playbook.
-* Support for **client-config-dir** implemented because I have different kinds of VPN clients:
-    * most clients don't want a default route, but for some I want to switch it on (on server side) temporarily, e.g. for my laptop abroad. Changed client configs are reread upon every fresh connect, so there is no need to restart openvpn after changes there.
-    * some want to access services, e.g. the file share or the music stream. These get my internal DNS-Server and -Domains pushed.
-    * some only need a network connection  so that I can remotely manage them even when they are behind NAT. In order to minimize the impact of the VPN on the client, they don't get a DNS-Server pushed.
-    * if there is file in this directory whose name matches the name in the certificate, this will be executed.
-    * there a is *DEFAULT* client config provided if there are options you want to push to all clients except the ones that do not get dns information pushed.
+* Support for **client-config-dir** implemented
+    * different levels of access by VPN clients:
+        * least privileged/always on: clients connects to vpn automatically and enables me to access it for remote management even if it is behind NAT. No DNS Server pushed.
+        * normal privileges: access to some local services (and other vpn clients).
+        * full privileges: access to some local services and masquerading to the internet (not yet automated)
+    * if there is file in this directory whose name matches the name in the certificate, this will be executed by `openvpn`
+    * there a is *DEFAULT* client config provided (currently empty). You can add options there to get pushed to all clients except the ones that have an individual client config.
 * There is no support for multiple openvpn servers on the same host in this role.
 
 **WARNING** work in progress, do not (yet) use!
@@ -84,9 +85,12 @@ Provided in `defaults`, can be overriden in `host_vars`
 * `openvpn_verb`: 4
 * `openvpn_write_ipp_sec`: 60
 * `openvpn_script_security`: 2
-* `openvpn_client_config_dir`: clientconfig
 
 ## Implementation notes
+
+As my IPv6 connectivity is just about to become reality, I cannot test this yet. Some of
+the IPv6 stuff is already here (best guess), some is completely missing.I can't give
+any promises about IPv6.
 
 There are much bigger ansible roles supporting openvpn out there.
 * [Rob's role](https://github.com/robertdebock/ansible-role-openvpn) is nice, but does not give me the control of the network settings I need.

@@ -1,0 +1,6 @@
+[Unit]
+Description=update dyn dns record on afraid.org
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/update_afraid.sh
