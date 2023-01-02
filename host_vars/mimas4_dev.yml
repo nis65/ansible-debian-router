@@ -103,25 +103,25 @@ openvpn_nft_targets_imaps:
 openvpn_nft_client_rules:
   - name: localhost_dns
     clients:
-      - lambda_v4
-      - nicolas-mobile_v4
+      - lambda
+      - nicolas-mobile
   - name: localhost_ssh
     clients:
-      - lambda_v4
-      - nicolas-mobile_v4
+      - lambda
+      - nicolas-mobile
   - name: localhost_unifi
     clients:
-      - lambda_v4
-      - zeta_v4
+      - lambda
+      - zeta
   - name: localnet_ssh
     clients:
-      - lambda_v4
+      - lambda
   - name: localnet_smb
     clients:
-      - lambda_v4
+      - lambda
   - name: localnet_music
     clients:
-      - lambda_v4
+      - lambda
   - name: localnet_imaps
     clients:
-      - lambda_v4
+      - lambda
