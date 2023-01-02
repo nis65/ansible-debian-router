@@ -55,6 +55,11 @@ dnsmasq_dhcp_ranges:
     range: "172.27.0.10,172.27.0.199"
     leasetime: "12h"
 
+# afraid role
+
+afraid_external_vpn_interface: enp1s0
+afraid_alias: is.n-e-t.name
+
 # openvpn role
 
 openvpn_server_interfaces:
@@ -76,6 +81,7 @@ openvpn_pushroutes:
 openvpn_push_dns:
   clientlist:
     - nicolas-mobile
+    - lambda
   dnsserverips:
     - 10.8.0.1
   dnsdomains:

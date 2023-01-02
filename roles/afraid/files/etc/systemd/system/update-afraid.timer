@@ -1,0 +1,10 @@
+[Unit]
+Description=Check dyndns regularly
+Requires=update-afraid.service
+
+[Timer]
+Unit=update-afraid.service
+OnUnitActiveSec=300
+
+[Install]
+WantedBy=timers.target
