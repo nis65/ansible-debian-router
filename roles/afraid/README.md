@@ -12,7 +12,7 @@ This role installs a small shell script and systemd units to regularly check whe
 upstream interface ip address still matches the DNS record. If not, an update request is done.
 
 **NOTE**: You need to configure your individual update URL in `/etc/default/afraid` before
-updates are actually done.
+updates are actually attempted.
 
 ## Variables
 
