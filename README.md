@@ -3,16 +3,16 @@ I am using a debian based firewall on pcengines hardware since
 decades. I started with WRAP, used ALIX and now it is an APU2.
 
 Instead of keeping lots of detailed documentation, I decided
-to automate my knowledge into ansible code. On January 2nd 2023,
+to automate my experience into ansible code. On January 2nd 2023,
 I replaced the old manually configured debian stretch apu2 with
-the shiny new bullsey ansible managed one.
+the shiny new bullseye ansible managed one.
 
 The goals of this project were:
 * do a (functionally equivalent) lifecycle, i.e. sidegrade from stretch to bullseye.
 * switch from iptables to native nftables.
 * automate the installation and configuration with ansible.
 * all important parameters needed to describe the target system should be in one place. This helps managing the configuration and eases testing.
-* practise ansible and nftables.
+* practise ansible and learn nftables.
 
 The implemented roles are very specific to my personal use case. I wanted
 to keep the roles as simple as possible, i.e. define only parameters/configurations
@@ -20,11 +20,11 @@ that I need. Fully generic roles are nice, but overcomplicate the code and
 make test coverage very hard.
 
 Every role uses only its own parameters. This needs some care when creating
-the configuration (i.e. the DHCP ranges you assign to dnsmasq must match the
-ip address of the interface you want to run DCHP on).
+the configuration, i.e. the DHCP ranges you assign to dnsmasq must match the
+ip address of the interface you want to run DCHP on.
 
 There is no validation on the parameters at all. It is easily possible
-to create a configuration that creates a broken router.
+break the system with one wrong configuration setting.
 **WARNING**: I managed to lock me out at least once during the development, so always
 have a console access ready to save you from shooting yourself in the foot.
 
@@ -70,7 +70,7 @@ the creation of multiple bridges or multiple vlan interfaces:
 * **bridges**: configure bridges on top of other interfaces
 * **vlanifs**: configure vlans on top of other interfaces
 
-### nftables filter and routing
+### base network infrastructure: packet filter, routing, dns, dhcp
 
 * **nft**: install some configuration files to configure
 the firewall on your router. nftables is configured natively,
@@ -85,10 +85,10 @@ without interfering with the core config file or with each other. The
 a (IPv4) dhcp and dns server for the downstream interfaces.
 Provides a `nft` drop in file.
 
-### applications
+### applications: openvpn, unifi
 
 * **openvpn**: only the server part. certificate management is exptected to be done externally.
-As I wanted to replace the predecessor system, all crypto material was to be migrated from the there anyway. Extensive nft drop in file. Individual client configuration (openvpn and nftables).
+As I wanted to replace a predecessor system, all crypto material was to be migrated from the there anyway. Extensive nft drop in file. Individual client configuration (openvpn and nftables).
 * **afraid**: needed to find your openvpn server from anywhere in the internet (dyndns alternative).
 * **unifi**: Installs the unifi software and provides some `nft` rules.
 
@@ -101,7 +101,7 @@ The variables of the roles are classified into two types:
   * virtual interface configuration (bridges, vlans)
   * openvpn client specific configuration and nft rules
 * *defaults*: Settings that are unlikely to be changed but it still nice to have them parametrized.
-  * all `roles/*/defaults/main.yml`
+  * all in `roles/*/defaults/main.yml`
 
 ## usage
 
