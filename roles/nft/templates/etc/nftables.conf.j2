@@ -43,7 +43,7 @@ add chain inet filter forward_apprules
 add chain inet filter input { type filter hook input priority filter; policy drop; }
 
 add rule  inet filter input counter comment "input all"
-add rule  inet filter input iifname lo counter accept comment "input from lo"
+add rule  inet filter input meta iifname lo counter accept comment "input from lo"
 add rule  inet filter input meta l4proto      icmp counter accept comment "input icmpv4"
 add rule  inet filter input meta l4proto ipv6-icmp counter accept comment "input icmpv6"
 add rule  inet filter input ct state established,related counter accept comment "input all returns"
@@ -51,17 +51,17 @@ add rule  inet filter input ct state established,related counter accept comment 
 add rule  inet filter input tcp dport @input_tcp_dports ct state new counter accept comment "input tcp"
 add rule  inet filter input tcp dport @input_udp_dports ct state new counter accept comment "input udp"
 # incoming connects allowed on all local interfaces
-add rule  inet filter input iifname @local_interfaces tcp dport @input_local_tcp_dports ct state new counter accept comment "input tcp"
-add rule  inet filter input iifname @local_interfaces tcp dport @input_local_udp_dports ct state new counter accept comment "input udp"
+add rule  inet filter input meta iifname @local_interfaces tcp dport @input_local_tcp_dports ct state new counter accept comment "input tcp"
+add rule  inet filter input meta iifname @local_interfaces tcp dport @input_local_udp_dports ct state new counter accept comment "input udp"
 # incoming connects allowed on upstream interface
-add rule  inet filter input iifname {{ nft_upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
+add rule  inet filter input meta iifname {{ nft_upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
 # incoming connects allowed on downstream interfaces
-add rule  inet filter input iifname @downstream_interfaces tcp dport @input_downstream_tcp_dports counter accept comment "input downstream tcp"
-add rule  inet filter input iifname @downstream_interfaces udp dport @input_downstream_udp_dports counter accept comment "input downstream udp"
+add rule  inet filter input meta iifname @downstream_interfaces tcp dport @input_downstream_tcp_dports counter accept comment "input downstream tcp"
+add rule  inet filter input meta iifname @downstream_interfaces udp dport @input_downstream_udp_dports counter accept comment "input downstream udp"
 {% if nft_mgmt_interface is defined -%}
 # incoming connects allowed on mgmt interface
-add rule  inet filter input iifname {{ nft_mgmt_interface }} tcp dport @input_mgmt_tcp_dports counter accept comment "input mgmt tcp"
-add rule  inet filter input iifname {{ nft_mgmt_interface }} udp dport @input_mgmt_udp_dports counter accept comment "input mgmt udp"
+add rule  inet filter input meta iifname {{ nft_mgmt_interface }} tcp dport @input_mgmt_tcp_dports counter accept comment "input mgmt tcp"
+add rule  inet filter input meta iifname {{ nft_mgmt_interface }} udp dport @input_mgmt_udp_dports counter accept comment "input mgmt udp"
 {% endif -%}
 # jump to application rules
 add rule  inet filter input counter jump input_apprules comment "input app rules"
@@ -72,7 +72,7 @@ add rule  inet filter input counter log prefix "input chain " comment "input log
 add chain inet filter output { type filter hook output priority filter; policy drop; }
 
 add rule  inet filter output counter comment "output all"
-add rule  inet filter output oifname lo counter accept comment "output to lo"
+add rule  inet filter output meta oifname lo counter accept comment "output to lo"
 add rule  inet filter output meta l4proto      icmp counter accept comment "output icmpv4"
 add rule  inet filter output meta l4proto ipv6-icmp counter accept comment "output icmpv6"
 add rule  inet filter output ct state established, related counter accept comment "output all returns"
@@ -81,10 +81,10 @@ add rule  inet filter output tcp dport @output_tcp_dports ct state new counter a
 add rule  inet filter output udp dport @output_udp_dports ct state new counter accept comment "output udp"
 add rule  inet filter output ip protocol igmp counter accept comment "output igmp"
 # outgoing connects allowed on upstream interface
-add rule  inet filter output oifname {{ nft_upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
+add rule  inet filter output meta oifname {{ nft_upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
 # outgoing connects allowed on downstream interfaces
-add rule  inet filter output oifname @downstream_interfaces tcp dport @output_downstream_tcp_dports counter accept comment "output downstream tcp"
-add rule  inet filter output oifname @downstream_interfaces udp dport @output_downstream_udp_dports counter accept comment "output downstream udp"
+add rule  inet filter output meta oifname @downstream_interfaces tcp dport @output_downstream_tcp_dports counter accept comment "output downstream tcp"
+add rule  inet filter output meta oifname @downstream_interfaces udp dport @output_downstream_udp_dports counter accept comment "output downstream udp"
 # jump to application rules
 add rule  inet filter output counter jump output_apprules comment "output app rules"
 # drop all other packets
@@ -98,10 +98,10 @@ add rule  inet filter forward meta l4proto      icmp counter accept comment "for
 add rule  inet filter forward meta l4proto ipv6-icmp counter accept comment "forward icmpv6"
 add rule  inet filter forward ct state established, related counter accept comment "forward all returns"
 # add packets allowed from downstream interfaces to downstream and upstream interfaces (aka local_interfaces)
-add rule  inet filter forward iifname @downstream_interfaces oifname @downstream_interfaces ip protocol tcp counter accept comment "forward stateless tcp"
-add rule  inet filter forward iifname @downstream_interfaces oifname @downstream_interfaces ip protocol udp counter accept comment "forward stateless udp"
-add rule  inet filter forward iifname @downstream_interfaces oifname {{ nft_upstream_interface }} ip protocol tcp ct state new counter accept comment "forward new tcp to uplink"
-add rule  inet filter forward iifname @downstream_interfaces oifname {{ nft_upstream_interface }} ip protocol udp ct state new counter accept comment "forward new udp to uplink"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol tcp counter accept comment "forward stateless tcp"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol udp counter accept comment "forward stateless udp"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol tcp ct state new counter accept comment "forward new tcp to uplink"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol udp ct state new counter accept comment "forward new udp to uplink"
 # jump to application rules
 add rule  inet filter forward counter jump forward_apprules comment "forward app rules"
 # drop all other packets
@@ -114,7 +114,7 @@ add set     ip masq downstream_interfaces { type ifname; }
 add element ip masq downstream_interfaces { {{ iface }} }
 {% endfor %}
 add chain   ip masq postrouting { type nat hook postrouting priority mangle; policy accept; }
-add rule    ip masq postrouting iifname @downstream_interfaces oifname {{ nft_upstream_interface }} counter masquerade comment "masquerade from down to up"
+add rule    ip masq postrouting meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} counter masquerade comment "masquerade from down to up"
 
 #### include all *nft files in conf dir
 #### hint: nftables ignores duplicates in the same set

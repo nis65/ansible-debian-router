@@ -40,17 +40,17 @@ dnsmasq_except_interface: enp1s0
 dnsmasq_other_servers:
   - name: UCS Domains
     domains:
-      - t7.iselin.net
-      - 0.25.172.in-addr.arpa
+      - t7.example.com
+      - 0.26.172.in-addr.arpa
     serverips:
-      - 172.25.0.10
-      - 172.25.0.12
+      - 172.26.0.10
+      - 172.26.0.12
 
-dnsmasq_dhcp_domain: iselin.net
+dnsmasq_dhcp_domain: example.com
 
 dnsmasq_dhcp_search_domain_names:
-  - iselin.ch
-  - iselin.net
+  - example.ch
+  - example.net
 
 dnsmasq_dhcp_staticips_source: ~/staticips
 
@@ -65,7 +65,7 @@ dnsmasq_dhcp_ranges:
 # afraid role
 
 afraid_external_vpn_interface: enp1s0
-afraid_domain_name: is.n-e-t.name
+afraid_domain_name: example.domain.com
 
 # openvpn role
 
@@ -87,13 +87,13 @@ openvpn_pushroutes:
 
 openvpn_push_dns:
   clientlist:
-    - nicolas-mobile
+    - alpha
     - lambda
   dnsserverips:
     - 10.8.0.1
   dnsdomains:
-    - iselin.net
-    - isel.in
+    - example.net
+    - example.org
 
 openvpn_nft_targets_smb:
   - 172.30.0.126
@@ -104,11 +104,11 @@ openvpn_nft_client_rules:
   - name: localhost_dns
     clients:
       - lambda
-      - nicolas-mobile
+      - alpha
   - name: localhost_ssh
     clients:
       - lambda
-      - nicolas-mobile
+      - alpha
   - name: localhost_unifi
     clients:
       - lambda
@@ -125,3 +125,9 @@ openvpn_nft_client_rules:
   - name: localnet_imaps
     clients:
       - lambda
+
+openvpn_nft_nbd_source_ipv4: 172.30.0.17
+openvpn_nft_service_rules:
+  - name: client_nbd
+    clients:
+      - gamma

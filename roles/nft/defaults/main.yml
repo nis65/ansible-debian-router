@@ -6,8 +6,12 @@ nft_base_dports:
       - "25"
       - "22, 2222"
       - "80, 443"
+  - name: input_udp
+    ports:
+      - "9"
   - name: output_udp
     ports:
+      - "9"
       - "53"
       - "123"
   - name: input_local_tcp
