@@ -9,4 +9,5 @@ none
 
 ## Implementation notes
 
-* the only change from the default debian setting is currently the configuration change to use nftables and not iptables.
+* the debian defaults enable ssh already - this is the only thing we really need.
+* the `jail.local` switches the fail2ban config from iptables to nftables
