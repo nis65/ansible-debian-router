@@ -65,7 +65,9 @@ add rule  inet filter input meta iifname {{ nft_mgmt_interface }} udp dport @inp
 {% endif -%}
 # jump to application rules
 add rule  inet filter input counter jump input_apprules comment "input app rules"
-# drop all other packets
+# log and drop invalid packets separately
+add rule  inet filter input ct state invalid counter log prefix "input invld " drop comment "input invalid log drop"
+# log all packets that get dropped by policy
 add rule  inet filter input counter log prefix "input chain " comment "input log drop"
 
 #### OUTPUT CHAIN
@@ -87,7 +89,9 @@ add rule  inet filter output meta oifname @downstream_interfaces tcp dport @outp
 add rule  inet filter output meta oifname @downstream_interfaces udp dport @output_downstream_udp_dports counter accept comment "output downstream udp"
 # jump to application rules
 add rule  inet filter output counter jump output_apprules comment "output app rules"
-# drop all other packets
+# log and drop invalid packets separately
+add rule  inet filter output ct state invalid counter log prefix "output invld " drop comment "output invalid log drop"
+# log all packets that get dropped by policy
 add rule  inet filter output counter log prefix "output chain " comment "output log drop"
 
 #### FORWARD CHAIN
@@ -104,7 +108,9 @@ add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {
 add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol udp ct state new counter accept comment "forward new udp to uplink"
 # jump to application rules
 add rule  inet filter forward counter jump forward_apprules comment "forward app rules"
-# drop all other packets
+# log and drop invalid packets separately
+add rule  inet filter forward ct state invalid counter log prefix "forward invld " drop comment "forward invalid log drop"
+# log all packets that get dropped by policy
 add rule  inet filter forward counter log prefix "forward chain " comment "forward log drop"
 
 # masquerade IPv4 from downstream interfaces to upstream interface
