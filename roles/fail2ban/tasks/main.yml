@@ -1,0 +1,24 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+
+- name: Config fail2ban to use nftables
+  ansible.builtin.copy:
+    src: etc/fail2ban/jail.local
+    dest: /etc/fail2ban/jail.local
+  register: configfail2ban
+
+- name: Ensure fail2ban is active and started
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: restarted
+    enabled: yes
+  when: configfail2ban.changed

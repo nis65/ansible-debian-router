@@ -6,6 +6,7 @@
   - bridges
   - vlanifs
   - nft
+  - fail2ban
   - routing
   - dnsmasq
   - unifi

@@ -79,6 +79,8 @@ mechanism so that later roles can add an additional settings file
 without interfering with the core config file or with each other. The
 `nft` role itself makes use of that drop in mechanism to configure some "always open" ports.
 
+* **fail2ban**: enables fail2ban with nftables, ssh is the only active service
+
 * **routing**: enables routing.
 
 * **dnsmasq**: installs and configures `dnsmasq` providing both
