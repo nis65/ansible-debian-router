@@ -58,7 +58,6 @@ All other configuration is done by ansible.
 ### Wishlist
 
 * Full IPv6 support: upstream interface, bridge, vlan, nft, routing, dnsmasq, openvpn. The poor integration of IPv6 in stretch compared to bullseye was one of my main drivers for this project.
-* fail2ban (nft integration)
 * asterisk
 
 ## Roles
@@ -78,6 +77,8 @@ no `firewalld` or other framework.  It features a simple file drop in
 mechanism so that later roles can add an additional settings file
 without interfering with the core config file or with each other. The
 `nft` role itself makes use of that drop in mechanism to configure some "always open" ports.
+
+* **fail2ban**: enables fail2ban with nftables, ssh is the only active service
 
 * **routing**: enables routing.
 
