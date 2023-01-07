@@ -35,7 +35,7 @@ nft_dnsmasq:
 
 `dnsmasq_flags` is a list of config flags for dnsmasq, the default setting logs dhcp communications only (`log-dhcp`). `log-queries`
 creates **a huge amount** of logs, especially if you have some devices querying for a local domain name of another device
-that only exists in `dnsmasq` while that other domain is actually running, i.e. it has a valid DHCP lease from `dnsmasq`).
+that only exists in `dnsmasq` while that other domain is actually running, i.e. it has a valid DHCP lease from `dnsmasq`.
 
 ```
 dnsmasq_flags:
