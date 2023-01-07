@@ -5,7 +5,9 @@ This role enables fail2ban
 
 ## Variables
 
-none
+Set in `defaults`: 
+
+`fail2ban_openvpn_retry` sets the number of failed openvpn connections from a certain ip until fail2ban locks the port for that ip
 
 ## Implementation notes
 
