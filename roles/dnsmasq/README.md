@@ -21,7 +21,7 @@ To be set in `host_vars`:
 
 Set in `defaults`:
 
-`nft_dnsmasq` is a list of dicts, each dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to. This is exactly the same logic as used in the `nft` role. The following default allows incoming DNS requests:
+`nft_dnsmasq` is a list of dicts, each dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to. This is exactly the same logic as used in the `nft` role. Please note that the `nft` rules for DHCP on the downstream interfaces are already in the base `nft` configuration. Therefore the following default needs to allow incoming DNS requests only:
 
 ```
 nft_dnsmasq:
@@ -33,13 +33,16 @@ nft_dnsmasq:
       - "53"
 ```
 
-`dnsmasq_flags` is a list of config flags for dnsmasq, the default logs both dns queries and dhcp communications:
+`dnsmasq_flags` is a list of config flags for dnsmasq, the default setting logs dhcp communications only (`log-dhcp`). `log-queries`
+creates **a huge amount** of logs, especially if you have some devices querying for a local domain name of another device
+that only exists in `dnsmasq` while that other domain is actually running, i.e. it has a valid DHCP lease from `dnsmasq`.
 
 ```
 dnsmasq_flags:
-  - log-queries
-  - log-dhcp
+  - "#log-queries"
+  - "log-dhcp"
 ```
+
 
 ## Implementation notes
 
