@@ -9,6 +9,6 @@
   - fail2ban
   - routing
   - dnsmasq
-  - unifi
   - openvpn
   - afraid
+  - unifi
