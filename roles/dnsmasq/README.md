@@ -21,7 +21,7 @@ To be set in `host_vars`:
 
 Set in `defaults`:
 
-`nft_dnsmasq` is a list of dicts, each dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to. This is exactly the same logic as used in the `nft` role. The following default allows incoming DNS requests:
+`nft_dnsmasq` is a list of dicts, each dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to. This is exactly the same logic as used in the `nft` role. Please note that the `nft` rules for DHCP on the downstream interfaces are already in the base `nft` configuration. Therefore the following default needs to allow incoming DNS requests only:
 
 ```
 nft_dnsmasq:
