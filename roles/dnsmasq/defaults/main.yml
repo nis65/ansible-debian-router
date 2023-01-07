@@ -8,5 +8,5 @@ nft_dnsmasq:
       - "53"
 
 dnsmasq_flags:
-  - log-queries
-  - log-dhcp
+  - "#log-queries"
+  - "log-dhcp"
