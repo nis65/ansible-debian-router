@@ -28,6 +28,12 @@
     dest: /etc/fail2ban/jail.d/openvpn.local
   register : configfail2banopenvpnjail
 
+- name: Config fail2ban nftables to block udp too
+  ansible.builtin.copy:
+    src: etc/fail2ban/action.d/nftables.local
+    dest: /etc/fail2ban/action.d/nftables.local
+  register: configfail2banpatchnftables
+
 - name: Configure jail for recidive
   ansible.builtin.template:
     src: etc/fail2ban/jail.d/recidive.local.j2
@@ -39,4 +45,4 @@
     name: fail2ban
     state: restarted
     enabled: yes
-  when: configfail2ban.changed or configfail2banopenvpnfilter.changed or configfail2banopenvpnjail.changed or configfail2banrecidivejail.changed
+  when: configfail2ban.changed or configfail2banopenvpnfilter.changed or configfail2banopenvpnjail.changed or configfail2banpatchnftables.changed or configfail2banrecidivejail.changed
