@@ -68,6 +68,7 @@ following roles to extend the firewall:
 
 ## Other implementation notes
 
+* The default debian `nftables.service` is extended to propagate restarts and reloads to `fail2ban`. See issue [#43](https://github.com/nis65/ansible-debian-router/issues/43) for more details.
 * You might want to install the `conntrack` package to easily view the currently tracked connections.
 * Format of `/etc/nftables.conf`
   * It took me hours to figure out that the first format for `nft -t` files, the *format seen in the output of nft list*, is not extendable at all.
