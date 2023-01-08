@@ -15,8 +15,6 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
     * there a is *DEFAULT* client config provided (currently empty). You can add options there to get pushed to all clients except the ones that have an individual client config.
 * There is no support for multiple openvpn servers on the same host in this role.
 
-**WARNING** work in progress, do not (yet) use!
-
 ## Variables
 
 To be set in `host_vars`:
