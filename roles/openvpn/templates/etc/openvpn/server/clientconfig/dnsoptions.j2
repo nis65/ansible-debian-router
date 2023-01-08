@@ -1,8 +1,0 @@
-{% for ip in openvpn_push_dns.dnsserverips %}
-push "dhcp-option DNS {{ ip }}"
-{% endfor %}
-{% for domain in openvpn_push_dns.dnsdomains %}
-push "dhcp-option DOMAIN {{ domain }}"
-{% endfor %}
-
-

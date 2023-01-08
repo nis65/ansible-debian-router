@@ -85,10 +85,17 @@ openvpn_pushroutes:
   - address: 172.27.0.1
     mask: 255.255.255.0
 
-openvpn_push_dns:
-  clientlist:
-    - alpha
-    - lambda
+openvpn_client_options:
+  - name: zeta
+    options:
+      - 'push "comp-lzo yes"'
+      - 'comp-lzo yes'
+  - name: alpha
+    dnsoption: yes
+  - name: lambda
+    dnsoption: yes
+
+openvpn_client_push_dns:
   dnsserverips:
     - 10.8.0.1
   dnsdomains:
