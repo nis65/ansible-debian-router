@@ -40,9 +40,22 @@
     dest: /etc/fail2ban/jail.d/recidive.local
   register : configfail2banrecidivejail
 
+- name: Create systemd override directory for fail2ban
+  ansible.builtin.file:
+    path: /etc/systemd/system/fail2ban.service.d
+    state: directory
+    mode: '0755'
+
+- name: Propagate nft reloads to fail2ban
+  ansible.builtin.copy:
+    src: etc/systemd/system/fail2ban.service.d/override.conf
+    dest: /etc/systemd/system/fail2ban.service.d/override.conf
+  register: configfail2banunit
+
 - name: Ensure fail2ban is active and started
   ansible.builtin.systemd:
     name: fail2ban
     state: restarted
     enabled: yes
-  when: configfail2ban.changed or configfail2banopenvpnfilter.changed or configfail2banopenvpnjail.changed or configfail2banpatchnftables.changed or configfail2banrecidivejail.changed
+    daemon_reload: yes
+  when: configfail2ban.changed or configfail2banopenvpnfilter.changed or configfail2banopenvpnjail.changed or configfail2banpatchnftables.changed or configfail2banrecidivejail.changed or configfail2banunit.changed

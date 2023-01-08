@@ -18,6 +18,7 @@ Set in `defaults`:
 ## Implementation notes
 
 * the `jail.local` switches the fail2ban config from iptables to nftables
-* the default recidive 
-   * action (ban all ports) has been changed to affect udp too (the default applies to tcp only)
-   * verdict (nft action when the filter matches) as been changed to drop (from reject)
+* the systemd unit is enhanced to make fail2ban play well together with nftables (see issue [#43](https://github.com/nis65/ansible-debian-router/issues/43) for details)
+* the default fail2ban verdict (nft action when the filter matches) as been changed to drop (from reject)
+* the default recidive action (ban all ports) has been changed to affect udp too (the default applies to tcp only)
+   
