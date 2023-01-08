@@ -13,21 +13,34 @@
 
 - name: Install basic nftables portlists
   ansible.builtin.template:
-    src: templates/etc/nftables.conf.d/nftbase.nft.j2
+    src: etc/nftables.conf.d/nftbase.nft.j2
     dest: /etc/nftables.conf.d/nftbase.nft
     backup: no
   register: configbasicoutput
 
 - name: Install nftables config file
   ansible.builtin.template:
-    src: templates/etc/nftables.conf.j2
+    src: etc/nftables.conf.j2
     dest: /etc/nftables.conf
     backup: no
   register: confignftables
+
+- name: Create systemd override directory for nftables
+  ansible.builtin.file:
+    path: /etc/systemd/system/nftables.service.d
+    state: directory
+    mode: '0755'
+
+- name: Propagate nft reloads to fail2ban
+  ansible.builtin.copy:
+    src: etc/systemd/system/nftables.service.d/override.conf
+    dest: /etc/systemd/system/nftables.service.d/override.conf
+  register: confignftunit
 
 - name: Enable / Restart nftables when config files changed
   ansible.builtin.systemd:
     name: "nftables.service"
     state: restarted
     enabled: yes
-  when: confignftables.changed or configbasicoutput.changed
+    daemon_reload: yes
+  when: confignftables.changed or configbasicoutput.changed or confignftunit.changed
