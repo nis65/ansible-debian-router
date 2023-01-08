@@ -5,7 +5,7 @@ This role enables fail2ban. The following jails are established
 
 * `sshd`: enabled by default in debian
 * `openvpn`: config created for this role, there is currently no preset openvpn configuration in debian
-* `recidive`: There are more and more bots around that know about `fail2ban` and similar frameworks. So the rate of hitting your firewall with login attempts is automatically adjusted to the `fail2ban` settings. `recidive` is the `fail2ban` module that watches its own logfile: If an IP gets banned too often by `fail2ban` application rule, `recidive` detects this and will block the ip (all tcp ports) for a much longer time.
+* `recidive`: There are more and more bots around that know about `fail2ban` and similar frameworks. So the rate of hitting your firewall with login attempts is automatically adjusted to the `fail2ban` settings. `recidive` is the `fail2ban` module that watches its own logfile: If an IP gets banned too often by `fail2ban` application rule, `recidive` detects this and will block the ip for a much longer time.
 
 ## Variables
 
@@ -18,5 +18,7 @@ Set in `defaults`:
 ## Implementation notes
 
 * the `jail.local` switches the fail2ban config from iptables to nftables
-* the default recidive action (ban all ports) has been adjusted (for nftables integagration only) to block all TCP **and** UDP traffic
 * the systemd unit is enhanced to make fail2ban play well together with nftables (see issue [#43](https://github.com/nis65/ansible-debian-router/issues/43) for details)
+* the default fail2ban verdict (nft action when the filter matches) as been changed to drop (from reject)
+* the default recidive action (ban all ports) has been changed to affect udp too (the default applies to tcp only)
+   
