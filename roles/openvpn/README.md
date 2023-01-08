@@ -38,11 +38,24 @@ openvpn_pushroutes:
   - address: 172.27.0.1
     mask: 255.255.255.0
 ~~~
-* `openvpn_push_dns`: the configuration which clients get dns information pushed and what information they get pushed
+* `openvpn_client_options`: client specific configuration. `options` are added line by line to the client config file, if `dnsoptions` is set to `yes`, the DNS server information is pushed (see next variable). `name` matches the name in the client certificate and is mandatory, the other two are optional:
 ~~~
-openvpn_push_dns:
-  clientlist:
-    - nicolas-mobile
+openvpn_client_options:
+  - name: zeta
+    options:
+      - 'push "comp-lzo yes"'
+      - 'comp-lzo yes'
+    dnsoption: yes
+  - name: alpha
+    dnsoption: yes
+  - name: zeta
+    options:
+      - 'push "comp-lzo yes"'
+      - 'comp-lzo yes'
+~~~
+* `openvpn_client_push_dns:`: the details for the DNS configuration to be pushed (if at all, see previous variable).
+~~~
+openvpn_client_push_dns:
   dnsserverips:
     - 10.8.0.1
   dnsdomains:
