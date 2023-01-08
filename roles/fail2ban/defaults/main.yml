@@ -1,1 +1,5 @@
 fail2ban_openvpn_retry: 5
+
+fail2ban_recidive_bantime: 6d
+fail2ban_recidive_findtime: 1d
+
