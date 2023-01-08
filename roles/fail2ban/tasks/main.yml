@@ -28,9 +28,15 @@
     dest: /etc/fail2ban/jail.d/openvpn.local
   register : configfail2banopenvpnjail
 
+- name: Configure jail for recidive
+  ansible.builtin.template:
+    src: etc/fail2ban/jail.d/recidive.local.j2
+    dest: /etc/fail2ban/jail.d/recidive.local
+  register : configfail2banrecidivejail
+
 - name: Ensure fail2ban is active and started
   ansible.builtin.systemd:
     name: fail2ban
     state: restarted
     enabled: yes
-  when: configfail2ban.changed or configfail2banopenvpnfilter.changed or configfail2banopenvpnjail.changed
+  when: configfail2ban.changed or configfail2banopenvpnfilter.changed or configfail2banopenvpnjail.changed or configfail2banrecidivejail.changed
