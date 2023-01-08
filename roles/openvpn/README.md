@@ -2,13 +2,13 @@
 
 This is a very simple openvpn ansible role, but fully supports my usecase:
 
-* VPN clients are authenticated by certificates only, but there is no support in this role whatsoever for you own CA (which is what is needed for certificate authentication).
-* As the main use case for this role is migration from an existing installation, the key/certificate files are expected to exist:
+* VPN clients are authenticated by certificates only, but there is **no support** in this role whatsoever to maintain a CA. But all client specific features rely on your ability to generate, manage and distribute certificates to the VPN clients. 
+* As the main use case is migration from an existing installation, the key/certificate files are simply expected to exist / to be managed somewhere on the ansible host:
     * if they are present on the target host, nothing is done (existing file is never overwritten, even when it's different).
     * if they are missing, they are copied from the ansible host (see variable settings below). If you want to force a copy, just delete them on the target host before running the playbook.
 * Support for **client-config-dir** implemented
     * different levels of access by VPN clients:
-        * least privileged/always on: clients connects to vpn automatically and enables me to access it for remote management even if it is behind NAT. No DNS Server pushed.
+        * least privileged/always on: the client connects to the vpn automatically. This enables me to access it for remote management even if it is behind NAT. No DNS Server pushed.
         * normal privileges: access to some local services (and other vpn clients).
         * full privileges: access to some local services and masquerading to the internet (not yet automated)
     * if there is file in this directory whose name matches the name in the certificate, this will be executed by `openvpn`
