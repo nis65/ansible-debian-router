@@ -1,0 +1,17 @@
+# DNS options
+{% if item.dnsoption is defined %}
+{% if item.dnsoption  %}
+{% for ip in openvpn_client_push_dns.dnsserverips %}
+push "dhcp-option DNS {{ ip }}"
+{% endfor %}
+{% for domain in openvpn_client_push_dns.dnsdomains %}
+push "dhcp-option DOMAIN {{ domain }}"
+{% endfor %}
+{% endif %}
+{% endif %}
+# Additional options
+{% if item.options is defined %}
+{% for option in item.options %}
+{{ option }}
+{% endfor %}
+{% endif %}

@@ -16,11 +16,11 @@
     src: templates/etc/openvpn/server/clientconfig/DEFAULT.j2
     dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/DEFAULT
 
-- name: Add client config file with dns options
+- name: Add client config files
   ansible.builtin.template:
-    src: templates/etc/openvpn/server/clientconfig/dnsoptions.j2
-    dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/{{ item }}
-  loop: "{{ openvpn_push_dns.clientlist }}"
+    src: templates/etc/openvpn/server/clientconfig/clientoptions.j2
+    dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/{{ item.name }}
+  loop: "{{ openvpn_client_options }}"
 
 - name: Add script to generate nft mapping from vpn static ips
   ansible.builtin.copy:
