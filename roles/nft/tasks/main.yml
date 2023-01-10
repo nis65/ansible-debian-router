@@ -16,14 +16,14 @@
     src: etc/nftables.conf.d/nftbase.nft.j2
     dest: /etc/nftables.conf.d/nftbase.nft
     backup: no
-  register: configbasicoutput
+  notify: Restart nftables
 
 - name: Install nftables config file
   ansible.builtin.template:
     src: etc/nftables.conf.j2
     dest: /etc/nftables.conf
     backup: no
-  register: confignftables
+  notify: Restart nftables
 
 - name: Create systemd override directory for nftables
   ansible.builtin.file:
@@ -35,12 +35,4 @@
   ansible.builtin.copy:
     src: etc/systemd/system/nftables.service.d/override.conf
     dest: /etc/systemd/system/nftables.service.d/override.conf
-  register: confignftunit
-
-- name: Enable / Restart nftables when config files changed
-  ansible.builtin.systemd:
-    name: "nftables.service"
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
-  when: confignftables.changed or configbasicoutput.changed or confignftunit.changed
+  notify: Restart nftables

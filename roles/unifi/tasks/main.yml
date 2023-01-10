@@ -1,6 +1,6 @@
 ---
 
-  # the install part of this playbook is the ansible version of the instructions here:
+  # the install part of this playbook is an ansible implementation of the instructions here:
   # https://gist.github.com/sinofool/233ed96dd85123ee5a87ad12e812d424
   
 - name: Exit play if os_family is not Debian
@@ -10,17 +10,10 @@
 
 - name: Open ports needed for unifi
   ansible.builtin.template:
-    src: templates/etc/nftables.conf.d/unifi.nft.j2
+    src: etc/nftables.conf.d/unifi.nft.j2
     dest: /etc/nftables.conf.d/unifi.nft
     backup: no
-  register: nftconfig
-
-- name: Enable / Restart nftables when config files changed
-  ansible.builtin.systemd:
-    name: "nftables.service"
-    state: restarted
-    enabled: yes
-  when: nftconfig.changed
+  notify: "Restart nftables for unifi"
 
 - name: Install curl, gpg
   ansible.builtin.apt:
@@ -43,7 +36,7 @@
  
 - name: configure repo for java
   ansible.builtin.copy:
-    src: files/etc/apt/sources.list.d/adoptopenjdk.list
+    src: etc/apt/sources.list.d/adoptopenjdk.list
     dest: /etc/apt/sources.list.d/adoptopenjdk.list
 
 - name: Install MongoDB apt key
@@ -53,7 +46,7 @@
 
 - name: Configure MongoDB repo
   ansible.builtin.copy:
-    src: files/etc/apt/sources.list.d/mongodb.list
+    src: etc/apt/sources.list.d/mongodb.list
     dest: /etc/apt/sources.list.d/mongodb.list
 
 - name: Install unifi apt key
@@ -63,7 +56,7 @@
 
 - name: Configure Unifi repo
   ansible.builtin.copy:
-    src: files/etc/apt/sources.list.d/100-ubnt-unifi.list
+    src: etc/apt/sources.list.d/100-ubnt-unifi.list
     dest: /etc/apt/sources.list.d/100-ubnt-unifi.list
 
 - name: Install openjdk8, unifi
@@ -73,3 +66,4 @@
       - unifi
     state: present
     update_cache: yes
+  notify: "Restart unifi"

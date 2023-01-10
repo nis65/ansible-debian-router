@@ -7,17 +7,10 @@
 
 - name: Open ports needed to answer dns requests
   ansible.builtin.template:
-    src: templates/etc/nftables.conf.d/dnsmasq.nft.j2
+    src: etc/nftables.conf.d/dnsmasq.nft.j2
     dest: /etc/nftables.conf.d/dnsmasq.nft
     backup: no
-  register: nftconfig
-
-- name: Enable / Restart nftables when config files changed
-  ansible.builtin.systemd:
-    name: "nftables.service"
-    state: restarted
-    enabled: yes
-  when: nftconfig.changed
+  notify: Restart nftables for dnsmasq
 
 - name: Install dnsmasq
   ansible.builtin.apt:
@@ -26,22 +19,14 @@
 
 - name: Install dnsmasq config file
   ansible.builtin.template:
-    src: templates/etc/dnsmasq.d/localconf.j2
+    src: etc/dnsmasq.d/localconf.j2
     dest: /etc/dnsmasq.d/localconf
     backup: no
-  register: configdnsmasq
+  notify: Restart dnsmasq
 
 - name: ensure some static hosts file is present
   ansible.builtin.copy:
     src: "{{ dnsmasq_dhcp_staticips_source }}"
     dest: /etc/dnsmasq.d/staticips
     force: no
-  register: configdnsmasqstatic
-
-- name: restart dnsmasq
-  ansible.builtin.systemd:
-    name: "dnsmasq.service"
-    state: restarted
-    enabled: yes
-  when: configdnsmasq.changed or configdnsmasqstatic.changed
-
+  notify: Restart dnsmasq

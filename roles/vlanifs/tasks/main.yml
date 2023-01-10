@@ -12,7 +12,7 @@
 
 - name: Install vlan config file
   ansible.builtin.template:
-    src: templates/etc/network/interfaces.d/vlanifs.j2
+    src: etc/network/interfaces.d/vlanifs.j2
     dest: /etc/network/interfaces.d/vlanifs
     backup: no
   register: configvlan
