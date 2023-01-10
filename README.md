@@ -15,13 +15,14 @@ The goals of this project were:
 * practise ansible and learn nftables.
 
 The implemented roles are very specific to my personal use case. I wanted
-to keep the roles as simple as possible, i.e. define only parameters/configurations
+to keep the roles as simple as possible, i.e. implement only parameters/configurations
 that I need. Fully generic roles are nice, but overcomplicate the code and
 make test coverage very hard.
 
 Every role uses only its own parameters. This needs some care when creating
-the configuration, i.e. the DHCP ranges you assign to dnsmasq must match the
-ip address of the interface you want to run DCHP on.
+the configuration, i.e. a DHCP range you assign using a `dnsmasq` 
+variables must match the ip addresse of an interface (assigned using 
+a `brigdges`  or `vlanifs` variable).
 
 There is no validation on the parameters at all. It is easily possible
 break the system with one wrong configuration setting.
@@ -29,7 +30,8 @@ break the system with one wrong configuration setting.
 have a console access ready to save you from shooting yourself in the foot.
 
 ## My router
-* debian bullseye, interfaces managed with `ifupdown`
+* debian bullseye, interfaces managed with `ifupdown` (not `systemd`)
+* 3 physical interfaces: enp1s0, enp2s0, enp3s0
 * 4 logical interfaces
    * enp1s0: upstream interface
    * br0: downstream, built from enp2s0 and enp3s0
@@ -37,7 +39,7 @@ have a console access ready to save you from shooting yourself in the foot.
    * tun0: the openvpn interface
 * nftables for packet filtering/masquerading
 * dnsmasq for dns/dhcp
-* unifi software and hardware, hardware managed on br0, but WLAN client traffic on tagged VLAN
+* unifi software and hardware, hardware managed on br0, WLAN client traffic on tagged VLAN
 * openvpn with client specific access configuration (both vpn and nft)
 
 ### ansible vs manual
@@ -72,10 +74,10 @@ the creation of multiple bridges or multiple vlan interfaces:
 ### base network infrastructure: packet filter, routing, dns, dhcp
 
 * **nft**: install some configuration files to configure
-the firewall on your router. nftables is configured natively,
+packet filtering on your router. `nftables` is configured natively,
 no `firewalld` or other framework.  It features a simple file drop in
-mechanism so that later roles can add an additional settings file
-without interfering with the core config file or with each other. The
+mechanism so that other roles can add additional settings files
+without interfering with the main config file or with each other. The
 `nft` role itself makes use of that drop in mechanism to configure some "always open" ports.
 
 * **fail2ban**: enables fail2ban with nftables, ssh and openvpn are monitored and acted upon.
@@ -89,7 +91,7 @@ Provides a `nft` drop in file.
 ### applications: openvpn, unifi
 
 * **openvpn**: only the server part. certificate management is exptected to be done externally.
-As I wanted to replace a predecessor system, all crypto material was to be migrated from the there anyway. Extensive nft drop in file. Individual client configuration (openvpn and nftables).
+As I wanted to replace a predecessor system, all crypto material was to be migrated from the there anyway. Extensive nft drop in file. Individual client configuration for both openvpn and nftables.
 * **afraid**: needed to find your openvpn server from anywhere in the internet (dyndns alternative).
 * **unifi**: Installs the unifi software and provides some `nft` rules.
 
@@ -98,7 +100,7 @@ As I wanted to replace a predecessor system, all crypto material was to be migra
 The variables of the roles are classified into two types:
 
 * *host_vars*: All settings that are likely to be different from router to router, e.g. `host_vars/mimas_dev.yml`:
-  * ip adresses (renumbering of all networks should be possible by channging host_vars only)
+  * ip adresses (renumbering of all networks should be possible by changing host_vars only)
   * virtual interface configuration (bridges, vlans)
   * openvpn client specific configuration and nft rules
 * *defaults*: Settings that are unlikely to be changed but it still nice to have them parametrized.
