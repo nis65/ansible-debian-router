@@ -21,7 +21,7 @@ but overcomplicate the code and make test coverage very hard.
 Every role uses only its own parameters. This creates some redundancy
 in the variables, i.e. a DHCP range you assign using a `dnsmasq` 
 variable must match the ip address of an interface (assigned using 
-a `brigdges`  or `vlanifs` variable). But it keeps the roles as independent
+a `bridges`  or `vlanifs` variable). But it keeps the roles as independent
 of each other as possible.
 
 There is no validation on the parameters at all. It is easily possible
