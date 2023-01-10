@@ -3,9 +3,8 @@ I am using a debian based firewall on pcengines hardware since
 decades. I started with WRAP, used ALIX and now it is an APU2.
 
 Instead of keeping lots of detailed documentation, I decided
-to automate my experience into ansible code. On January 2nd 2023,
-I replaced the old manually configured debian stretch apu2 with
-the shiny new bullseye ansible managed one.
+to automate my experience into ansible code. The new ansible
+managed debian bullseye router is in production since January 2nd 2023.
 
 The goals of this project were:
 * do a (functionally equivalent) lifecycle, i.e. sidegrade from stretch to bullseye.
@@ -15,9 +14,9 @@ The goals of this project were:
 * practise ansible and learn nftables.
 
 The implemented roles are very specific to my personal use case. I wanted
-to keep the roles as simple as possible, i.e. implement only parameters/configurations
-that I need. Fully generic roles are nice, but overcomplicate the code and
-make test coverage very hard.
+to keep the roles as simple as possible, i.e. propagate application configuration
+options to ansible variables only when I need them. Fully generic roles are nice,
+but overcomplicate the code and make test coverage very hard.
 
 Every role uses only its own parameters. This creates some redundancy
 in the variables, i.e. a DHCP range you assign using a `dnsmasq` 
