@@ -59,7 +59,7 @@ All other configuration is done by ansible.
 
 ### Wishlist
 
-* Full IPv6 support: upstream interface, bridge, vlan, nft, routing, dnsmasq, openvpn. The poor integration of IPv6 in stretch compared to bullseye was one of my main drivers for this project.
+* Full IPv6 support: upstream interface, bridge, vlan, nft, routing, dnsmasq, openvpn. The poor integration of IPv6 in stretch compared to bullseye was one of the main drivers for me to finally attack this sidegrade.
 * asterisk
 
 ## Roles
