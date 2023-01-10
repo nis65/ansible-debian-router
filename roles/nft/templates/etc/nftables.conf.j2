@@ -123,6 +123,5 @@ add chain   ip masq postrouting { type nat hook postrouting priority mangle; pol
 add rule    ip masq postrouting meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} counter masquerade comment "masquerade from down to up"
 
 #### include all *nft files in conf dir
-#### hint: nftables ignores duplicates in the same set
 
 include "/etc/nftables.conf.d/*.nft"

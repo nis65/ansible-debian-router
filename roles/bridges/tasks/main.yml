@@ -12,7 +12,7 @@
 
 - name: Install bridge config file
   ansible.builtin.template:
-    src: templates/etc/network/interfaces.d/bridges.j2
+    src: etc/network/interfaces.d/bridges.j2
     dest: /etc/network/interfaces.d/bridges
     backup: no
   register: configbridge

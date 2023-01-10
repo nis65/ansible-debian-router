@@ -1,0 +1,9 @@
+---
+
+- name: Restart fail2ban
+  ansible.builtin.systemd:
+    name: fail2ban.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"

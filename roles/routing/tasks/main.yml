@@ -11,10 +11,4 @@
       # Enable IPv4 routing on all interfaces
       net.ipv4.ip_forward=1
     dest: /etc/sysctl.d/local.conf
-  register: confsysctl
-
-- name: Restart sysctl when needed
-  ansible.builtin.systemd:
-    name: "systemd-sysctl.service"
-    state: restarted
-  when: confsysctl.changed
+  notify: Restart sysctl

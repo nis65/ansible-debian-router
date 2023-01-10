@@ -13,18 +13,18 @@
 
 - name: Add default client config file
   ansible.builtin.template:
-    src: templates/etc/openvpn/server/clientconfig/DEFAULT.j2
+    src: etc/openvpn/server/clientconfig/DEFAULT.j2
     dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/DEFAULT
 
 - name: Add client config files
   ansible.builtin.template:
-    src: templates/etc/openvpn/server/clientconfig/clientoptions.j2
+    src: etc/openvpn/server/clientconfig/clientoptions.j2
     dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/{{ item.name }}
   loop: "{{ openvpn_client_options }}"
 
 - name: Add script to generate nft mapping from vpn static ips
   ansible.builtin.copy:
-    src: files/usr/local/bin/gen_nft_defines
+    src: usr/local/bin/gen_nft_defines
     dest: /usr/local/bin/gen_nft_defines
     backup: no
     mode: "755"
@@ -51,17 +51,10 @@
 
 - name: Add nft rules to accept VPN connections
   ansible.builtin.template:
-    src: templates/etc/nftables.conf.d/openvpn.nft.j2
+    src: etc/nftables.conf.d/openvpn.nft.j2
     dest: /etc/nftables.conf.d/openvpn.nft
     backup: no
-  register: openvpnnftconfig
-
-- name: Enable / Restart nftables when config files changed
-  ansible.builtin.systemd:
-    name: "nftables.service"
-    state: restarted
-    enabled: yes
-  when: openvpnnftconfig.changed
+  notify: "Restart nftables for openvpn"
 
 - name: Install openvpn
   ansible.builtin.apt:
@@ -94,14 +87,7 @@
 
 - name: Install openvpn server config
   ansible.builtin.template:
-    src: templates/etc/openvpn/server/server.conf.j2
+    src: etc/openvpn/server/server.conf.j2
     dest: /etc/openvpn/server/{{ openvpn_server_name }}.conf
     backup: no
-  register: configopenvpn
-
-- name: Start openvpn server
-  ansible.builtin.systemd:
-    name: openvpn-server@{{ openvpn_server_name }}.service
-    state: restarted
-    enabled: yes
-  when: configopenvpn.changed
+  notify: "Restart openvpn"

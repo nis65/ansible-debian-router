@@ -1,0 +1,17 @@
+---
+
+- name: Restart nftables for unifi
+  ansible.builtin.systemd:
+    name: nftables.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Restart unifi
+  ansible.builtin.systemd:
+    name: unifi.service
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  ignore_errors: "{{ ansible_check_mode }}"
