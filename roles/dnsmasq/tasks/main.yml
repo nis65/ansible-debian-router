@@ -17,6 +17,12 @@
     name: dnsmasq
     state: present
 
+- name: Create dnsmasq hosts dir
+  ansible.builtin.file:
+    path: /etc/dnsmasq.hosts.d/
+    state: directory
+    mode: '0755'
+
 - name: Install dnsmasq config file
   ansible.builtin.template:
     src: etc/dnsmasq.d/localconf.j2

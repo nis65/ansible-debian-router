@@ -3,4 +3,4 @@ Description=update nft for vpn clients
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/gen_nft_defines
+ExecStart=/usr/local/bin/update_from_ipp
