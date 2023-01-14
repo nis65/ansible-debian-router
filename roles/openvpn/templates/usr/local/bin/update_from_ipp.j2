@@ -1,0 +1,74 @@
+#!/usr/bin/bash
+
+# TODO: Properly test and activate IPv6. It should all be there.
+
+VPNDOMAIN="{{ openvpn_dns_domain }}"
+
+IPPSOURCE=/var/log/openvpn/ipp.txt
+NFTDEST=/etc/nftables.conf.d/clients.openvpn
+DNSDEST=/etc/dnsmasq.hosts.d/hosts.openvpn
+
+TMPDIR=/run/openvpntmp
+if [[ ! -d $TMPDIR ]]
+then
+  mkdir -p $TMPDIR
+fi
+
+NFTTMP=$TMPDIR/clients.openvpn
+DNSTMP=$TMPDIR/hosts.openvpn
+
+cat /dev/null > $NFTTMP
+cat /dev/null > $DNSTMP
+
+LOGGER="/usr/bin/logger -t $0"
+
+CURNAME="NONE"
+CURV4=""
+CURV6=""
+( cat $IPPSOURCE | sort ; echo "END" ) | while IFS=',' read name ipv4 ipv6
+do
+  if [[ "$CURNAME" != "$name" ]]
+  then
+    if [[ "$CURNAME" != "NONE" ]]
+    then
+      echo "define ${CURNAME}_v4 = { ${CURV4}}" >> $NFTTMP
+      echo "#define ${CURNAME}_v6 = { ${CURV6}}" >> $NFTTMP
+    fi
+    CURNAME=$name
+    CURV4="${ipv4}, "
+    CURV6="${ipv6}, "
+  else
+    CURV4="${CURV4}${ipv4}, "
+    CURV6="${CURV6}${ipv6}, "
+  fi
+  if [[ $CURNAME != "END" ]]
+  then
+    echo "${ipv4}        ${name}.${VPNDOMAIN}" >> $DNSTMP
+    if [[ ! -z "${ipv6}" ]]
+    then
+      echo "${ipv6}        ${name}.${VPNDOMAIN}" >> $DNSTMP
+    fi
+  fi
+done
+
+# changes ?
+
+if diff $NFTTMP $NFTDEST > /dev/null 2>&1
+then
+  $LOGGER "$NFTDEST unchanged, doing nothing"
+else
+  mv $NFTTMP $NFTDEST
+  $LOGGER "new $NFTDEST, restarting nftables"
+  systemctl restart nftables
+fi
+
+if diff $DNSTMP $DNSDEST > /dev/null 2>&1
+then
+  $LOGGER "$DNSDEST unchanged, doing nothing"
+else
+  mv $DNSTMP $DNSDEST
+  $LOGGER "new $DNSDEST"
+  # restart not needed for changes in that dir
+  # systemctl restart dnsmasq
+fi
+

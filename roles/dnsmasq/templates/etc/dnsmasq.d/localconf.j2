@@ -6,6 +6,8 @@ except-interface={{ dnsmasq_except_interface }}
 {{ flag }}
 {% endfor %}
 
+hostsdir=/etc/dnsmasq.hosts.d/
+
 {% for server in dnsmasq_other_servers %}
 {% for domain in server.domains %}
 {% for ip in server.serverips %}

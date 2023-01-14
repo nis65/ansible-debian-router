@@ -23,9 +23,9 @@
   loop: "{{ openvpn_client_options }}"
 
 - name: Add script to generate nft mapping from vpn static ips
-  ansible.builtin.copy:
-    src: usr/local/bin/gen_nft_defines
-    dest: /usr/local/bin/gen_nft_defines
+  ansible.builtin.template:
+    src: usr/local/bin/update_from_ipp.j2
+    dest: /usr/local/bin/update_from_ipp
     backup: no
     mode: "755"
 

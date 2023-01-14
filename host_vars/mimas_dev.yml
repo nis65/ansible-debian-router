@@ -102,6 +102,8 @@ openvpn_client_push_dns:
     - example.net
     - example.org
 
+openvpn_dns_domain: vpn.example.net
+
 openvpn_nft_targets_smb:
   - 172.30.0.126
 openvpn_nft_targets_imaps:
