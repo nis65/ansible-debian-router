@@ -1,8 +1,8 @@
 # openvpn
 
-This is a very simple openvpn ansible role, but fully supports my usecase:
+This openvpn ansible role just covers my use case.
 
-* VPN clients are authenticated by certificates only, but there is **no support** in this role whatsoever to maintain a CA. But all client specific features rely on your ability to generate, manage and distribute certificates to the VPN clients. 
+* VPN clients are authenticated by certificates only, but there is **no support** in this role whatsoever to maintain a CA. But all client specific features rely on your ability to generate, manage and distribute certificates to the VPN clients.
 * As the main use case is migration from an existing installation, the key/certificate files are simply expected to exist / to be managed somewhere on the ansible host:
     * if they are present on the target host, nothing is done (existing file is never overwritten, even when it's different).
     * if they are missing, they are copied from the ansible host (see variable settings below). If you want to force a copy, just delete them on the target host before running the playbook.
@@ -10,7 +10,7 @@ This is a very simple openvpn ansible role, but fully supports my usecase:
     * different levels of access by VPN clients:
         * least privileged/always on: the client connects to the vpn automatically. This enables me to access it for remote management even if it is behind NAT. No DNS Server pushed.
         * normal privileges: access to some local services (and other vpn clients).
-        * full privileges: access to some local services and masquerading to the internet (not yet automated)
+        * full privileges: access to some local services and masquerading to the internet (not yet implemented)
     * if there is file in this directory whose name matches the name in the certificate, this will be executed by `openvpn`
     * there a is *DEFAULT* client config provided (currently empty). You can add options there to get pushed to all clients except the ones that have an individual client config.
 * There is no support for multiple openvpn servers on the same host in this role.
@@ -60,6 +60,7 @@ openvpn_client_push_dns:
     - mydomain.net
     - myotherdomain.ch
 ~~~
+* `openvpn_dns_domain`: the domain name that should be appended to the hostname as defined in the client certificate. This is used to add the vpn client names to the dnsmasq host list.
 * `openvpn_nft_targets_smb`: a list of target ip adresses of `smb` servers in your local network you want give access to at least one vpn client
 * `openvpn_nft_targets_imaps`: a list of target ip adresses of `imaps` servers in your local network you want give access to at least one vpn client
 * `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. 

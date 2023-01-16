@@ -1,8 +1,12 @@
 # ansible-debian-router
-I am using a debian based firewall on pcengines hardware since 
-decades. I started with WRAP, used ALIX and now it is an APU2.
+I am using a debian based firewall as home router since
+decades. The first thing I do to the router as received
+from my internet provider is to switch it into bridge mode
+and connect my debian router. I am using hardware from
+`pcengines.ch`. I started with WRAP, used ALIX and now 
+it is an [APU2](https://pcengines.ch/apu2.htm).
 
-Instead of keeping lots of detailed documentation, I decided
+Instead of updating and redoing lots of detailed documentation, I decided
 to automate my experience into ansible code. The new ansible
 managed debian bullseye router is in production since January 2nd 2023.
 
@@ -25,11 +29,13 @@ a `bridges`  or `vlanifs` variable). But it keeps the roles as independent
 of each other as possible.
 
 There is no validation on the parameters at all. It is easily possible
-break the system with one wrong configuration setting.
+break the system with one wrong configuration setting. You have to 
+know what you are doing.
+
 **WARNING**: I managed to lock me out at least once during the development, so always
 have a console access ready to save you from shooting yourself in the foot.
 
-## My router
+## My home router
 * debian bullseye, interfaces managed with `ifupdown` (not `systemd`)
 * 3 physical interfaces: enp1s0, enp2s0, enp3s0
 * 4 logical interfaces
@@ -51,7 +57,7 @@ This is what I setup manually:
    * Configure the upstream interface with IPv4 DHCP
    * Configure passwordless login as root.
 * The following files are used by the running system, but **not** touched by ansible:
-   * `/etc/hosts` (for local or vpn hostnames that are not learned by dnsmasq over dhcp)
+   * `/etc/hosts` (for local hostnames that are not learned by dnsmasq over dhcp)
    * `/etc/network/interfaces` (lo and IPv4 DHCP config of the upstream interface)
    * `/etc/crontab` (if you need this)
 
@@ -90,8 +96,8 @@ Provides a `nft` drop in file.
 
 ### applications: openvpn, unifi
 
-* **openvpn**: only the server part. certificate management is exptected to be done externally.
-As I wanted to replace a predecessor system, all crypto material was to be migrated from the there anyway. Extensive nft drop in file. Individual client configuration for both openvpn and nftables.
+* **openvpn**: only the server part. certificate management is expected to be done externally.
+As I wanted to replace a predecessor system, all crypto material was present already and to be migrated from there. Extensive nft drop in file. Individual client configuration for both openvpn and nftables.
 * **afraid**: needed to find your openvpn server from anywhere in the internet (dyndns alternative).
 * **unifi**: Installs the unifi software and provides some `nft` rules.
 

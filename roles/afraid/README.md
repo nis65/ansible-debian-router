@@ -11,7 +11,7 @@ home router in the worldwide DNS. There are a lot of alternatives to that servic
 This role installs a small shell script and systemd units to regularly check whether the
 upstream interface ip address still matches the DNS record. If not, an update request is done.
 
-**NOTE**: You need to configure your individual update URL in `/etc/default/afraid` before
+**NOTE**: You need to manually configure your individual update URL in `/etc/default/afraid` before
 updates are actually attempted.
 
 ## Variables

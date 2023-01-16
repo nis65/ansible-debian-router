@@ -1,7 +1,9 @@
 
 # dnsmasq
 
-dnsmasq is used as both DNS and DHCP Server. 
+dnsmasq is used as both DNS and DHCP Server. The chosen config allows to place/remove
+files in `/etc/dnsmasq.hosts.d/` to add additional hostnames to the DNS. This is used
+by the `openvpn` role.
 
 ## Variables
 
@@ -46,4 +48,4 @@ dnsmasq_flags:
 
 ## Implementation notes
 
-The firewall rules are implemented in `dnsmasq.nft.j2`. The rules for DNS traffic are using the rules in `/etc/nftables.conf` and extend the respective port sets.  The rules to accept DCHP requests and send replies are implemented as stateless `apprules`
+The firewall rules are implemented in `dnsmasq.nft.j2`. The rules for DNS traffic are using the rules in `/etc/nftables.conf` and extend the respective port sets.  The rules to accept DCHP requests and send replies are implemented as stateless `apprules`.
