@@ -2,8 +2,9 @@
 # unifi
 
 
-
 ## Variable
+
+I did not find any reason to have host specific configuration, so the only variable is a default one.
 
 `nft_unifi` is a list of dicts, each dict has a name and a list of ports. The name is used to construct the name of the set where the ports go to. This is exactly the same logic as used in the `nft` role. So
 
@@ -65,7 +66,3 @@ which will turn up in `nft list rules`:
 ## Implementation notes
 
 This role is somewhat slow as it enforces an `apt-get update` in the last step because the previous tasks add new repos and keys. Maybe this should only be done if these pre tasks acutally changed something.
-
-The unifi stuff in its current state is untested as I don't have spare unifi hardware for testing right now.
-
-
