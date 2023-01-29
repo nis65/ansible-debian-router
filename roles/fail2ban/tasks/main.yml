@@ -28,7 +28,7 @@
     dest: /etc/fail2ban/jail.d/openvpn.local
   notify: Restart fail2ban
 
-- name: Config fail2ban nftables to block udp too
+- name: Config fail2ban nftables to add counters and add udp
   ansible.builtin.copy:
     src: etc/fail2ban/action.d/nftables.local
     dest: /etc/fail2ban/action.d/nftables.local

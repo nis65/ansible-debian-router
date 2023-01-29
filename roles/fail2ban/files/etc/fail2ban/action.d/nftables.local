@@ -2,5 +2,5 @@
 rule_match-allports = meta l4proto { tcp, udp }
 
 [Init]
-blocktype = drop
+blocktype = counter drop
 
