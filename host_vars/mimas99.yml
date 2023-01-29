@@ -1,3 +1,10 @@
+# upv6if role
+
+upv6if_iface: enp1s0
+upv6if_mode: dhcp
+upv6if_configlines:
+  - "request_prefix 1"
+  - "accept_ra 2"
 
 # bridges role
 bridges:
