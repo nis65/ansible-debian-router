@@ -1,0 +1,9 @@
+auto {{ upv6if_iface }}
+iface {{ upv6if_iface }} inet6 {{ upv6if_mode }}
+{% if upv6if_configlines is defined %}
+{% if upv6if_configlines is not none  %}
+{% for line in upv6if_configlines %}
+    {{ line }}
+{% endfor %}
+{% endif %}
+{% endif %}

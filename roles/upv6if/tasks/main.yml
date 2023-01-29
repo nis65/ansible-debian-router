@@ -1,0 +1,26 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Install ipv6 uplink interface configuration
+  ansible.builtin.template:
+    src: etc/network/interfaces.d/uplinkv6.j2
+    dest: /etc/network/interfaces.d/uplinkv6
+    backup: no
+  register: configupipv6
+
+- name: show the global ips
+  ansible.builtin.debug:
+    msg: '{{ ansible_facts[upv6if_iface].ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) }}'
+
+- name: count number of public ips
+  ansible.builtin.set_fact:
+    currentnumberofipv6s: '{{ ansible_facts[upv6if_iface].ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) | length }}'
+
+- name: restart uplink interface if no global ip or config changed
+  ansible.builtin.shell:
+    cmd: "ifdown {{ upv6if_iface }}; ifup {{ upv6if_iface }}"
+  when: ( currentnumberofipv6s == "0" ) or configupipv6.changed 
