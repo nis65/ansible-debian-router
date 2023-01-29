@@ -1,5 +1,19 @@
 
-- name: Debian Router Setup
+- name: Debian Router Setup (DEVEL)
+  hosts: mimas99
+  become: true
+  roles:
+  #- bridges
+  #- vlanifs
+  #- nft
+  - fail2ban
+  #- routing
+  #- dnsmasq
+  #- openvpn
+  #- afraid
+  #- unifi
+
+- name: Debian Router Setup (PROD)
   hosts: mimas
   become: true
   roles:

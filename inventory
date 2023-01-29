@@ -1,1 +1,6 @@
-mimas
+# uncomment for PROD
+#mimas
+# uncomment to apply PROD settings to test (don't)
+#mimas ansible_host=mimas99
+# used for TEST
+mimas99
