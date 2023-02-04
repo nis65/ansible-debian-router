@@ -1,0 +1,2 @@
+
+upv6if_check_delegation_file: "/var/lib/dhcp/dhclient6.{{ upv6if_iface }}.leases"
