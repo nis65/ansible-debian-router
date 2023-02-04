@@ -16,8 +16,8 @@ However, this would need live automation (i.e. dynamically on the router)
 of a lot of steps and some are even on a remote node:
 
 * assign IPv6 addresses to all local interfaces including openvpn/`ppp0`.
-* adjust route to reach the local subnet behind a downstream router
-* fully renumber the downstream router
+* adjust route to reach the downstream subnet behind a downstream router
+* fully renumber the downstream router and subnet
 
 Therefore, I decided against dynamic renumbering on the debian router
 in favor of defining that renumbering is the responsibility of the 
