@@ -24,3 +24,17 @@
   ansible.builtin.shell:
     cmd: "ifdown {{ upv6if_iface }}; ifup {{ upv6if_iface }}"
   when: ( currentnumberofipv6s == "0" ) or configupipv6.changed 
+
+- name: check delegated subnet 
+  ansible.builtin.lineinfile: 
+    line: "    iaprefix {{ upv6if_expected_delegation }} {"
+    state: present
+    path: "/var/lib/dhcp/dhclient6.{{upv6if_iface}}.leases"
+  check_mode: yes
+  register: delegation_subnet
+
+- name: Abort if configured delegated subnet not found in leases file
+  ansible.builtin.fail:
+    msg: "Expected delegated subnet {{ upv6if_expected_delegation }} not found on target /var/lib/dhcp/dhclient6.{{ upv6if_iface }}.leases, fix this first!"
+  when: delegation_subnet is changed
+-
