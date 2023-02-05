@@ -13,14 +13,17 @@ bridges:
     members:
       - enp2s0
       - enp3s0
-    address: 172.30.0.1
-    netmask: 255.255.254.0
-    broadcast: 172.30.1.255
-    routes:
-      - target: 10.10.10.0/24
-        gw: 172.30.0.134
-      - target: 10.10.20.0/24
-        gw: 172.30.0.134
+    v4info:
+      address: 172.30.0.1
+      netmask: 255.255.254.0
+      broadcast: 172.30.1.255
+      routes:
+        - target: 10.10.10.0/24
+          gw: 172.30.0.134
+        - target: 10.10.20.0/24
+          gw: 172.30.0.134
+    v6info:
+      address: 2001:db8:1234:6f0::1/64
 
 ```
 

@@ -6,13 +6,17 @@
   ansible.builtin.debug:
     msg: "Running restart checks for bridge {{ item.name }}"
 
-- name: get current ip from ansible_facts
+- name: get current ipv4 from ansible_facts
   ansible.builtin.set_fact:
-    currentip: "{{ ansible_facts[item.name].ipv4.address | default('NOIP') }}"
+    currentv4ip: "{{ ansible_facts[item.name].ipv4.address | default('NOIP') }}"
+
+- name: get current ipv6 from ansible_facts
+  ansible.builtin.set_fact:
+    currentv6ip: '{{ansible_facts[item.name].ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) | first | default("NoV6") }}/{{ ansible_facts[item.name].ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="prefix" ) | first | default("NoLen") }}'
 
 - name: restart bridge interface if config changed or wrong IP-address
   ansible.builtin.shell:
     cmd: "ifdown {{ item.name }}; ifup {{ item.name }}"
-  when: ( currentip != item.address ) or configbridge.changed
+  when: ( currentv4ip != item.v4info.address ) or (currentv6ip != item.v6info.address) or configbridge.changed
 
 

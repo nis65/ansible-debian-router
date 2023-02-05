@@ -9,10 +9,14 @@ auto {{ bridge.name }}
 iface {{ bridge.name }} inet static
     bridge_ports{% for interface in bridge.members %} {{ interface }}{% endfor %}
 
-    address {{ bridge.address }}
-    netmask {{ bridge.netmask }}
-    broadcast {{ bridge.broadcast }}
-    {% for route in bridge.routes %}up ip route add {{ route.target }} via {{ route.gw }}
+    address {{ bridge.v4info.address }}
+    netmask {{ bridge.v4info.netmask }}
+    broadcast {{ bridge.v4info.broadcast }}
+    {% for route in bridge.v4info.routes %}up ip route add {{ route.target }} via {{ route.gw }}
     down ip route del {{ route.target }} via {{ route.gw }}
     {% endfor %}
+iface {{ bridge.name }} inet6 static
+    bridge_ports{% for interface in bridge.members %} {{ interface }}{% endfor %}
+
+    address {{ bridge.v6info.address }}
 {% endfor %}
