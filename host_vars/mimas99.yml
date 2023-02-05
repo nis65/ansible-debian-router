@@ -1,5 +1,7 @@
 # upv6if role
 
+upv6if_expected_delegation: "2001:db8:1234:6f0::/60"
+
 upv6if_iface: enp1s0
 upv6if_mode: dhcp
 upv6if_configlines:
