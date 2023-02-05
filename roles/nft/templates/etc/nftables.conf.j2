@@ -47,6 +47,7 @@ add rule  inet filter input meta iifname lo counter accept comment "input from l
 add rule  inet filter input meta l4proto      icmp counter accept comment "input icmpv4"
 add rule  inet filter input meta l4proto ipv6-icmp counter accept comment "input icmpv6"
 add rule  inet filter input ip6 daddr fe80::/10 counter accept comment "input ip6 link local"
+add rule  inet filter input ip6 daddr ff00::/8 counter accept comment "input ip6 multicast"
 add rule  inet filter input ct state established,related counter accept comment "input all returns"
 # incoming connects allowed on all interfaces
 add rule  inet filter input tcp dport @input_tcp_dports ct state new counter accept comment "input tcp"
@@ -79,6 +80,7 @@ add rule  inet filter output meta oifname lo counter accept comment "output to l
 add rule  inet filter output meta l4proto      icmp counter accept comment "output icmpv4"
 add rule  inet filter output meta l4proto ipv6-icmp counter accept comment "output icmpv6"
 add rule  inet filter output ip6 saddr fe80::/10 counter accept comment "output ip6 link local"
+add rule  inet filter output ip6 saddr ff00::/8 counter accept comment "output ip6 multicast"
 add rule  inet filter output ct state established, related counter accept comment "output all returns"
 # outgoing connects allowed on all interfaces
 add rule  inet filter output tcp dport @output_tcp_dports ct state new counter accept comment "output tcp"
@@ -104,10 +106,14 @@ add rule  inet filter forward meta l4proto      icmp counter accept comment "for
 add rule  inet filter forward meta l4proto ipv6-icmp counter accept comment "forward icmpv6"
 add rule  inet filter forward ct state established, related counter accept comment "forward all returns"
 # add packets allowed from downstream interfaces to downstream and upstream interfaces (aka local_interfaces)
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol tcp counter accept comment "forward stateless tcp"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol udp counter accept comment "forward stateless udp"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol tcp ct state new counter accept comment "forward new tcp to uplink"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol udp ct state new counter accept comment "forward new udp to uplink"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol tcp counter accept comment "forward stateless tcp V4"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip6 nexthdr tcp counter accept comment "forward stateless tcp V6"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol udp counter accept comment "forward stateless udp V4"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip6 nexthdr udp counter accept comment "forward stateless udp V6"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol tcp ct state new counter accept comment "forward new tcp to uplink V4"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip6 nexthdr tcp ct state new counter accept comment "forward new tcp to uplink V6"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol udp ct state new counter accept comment "forward new udp to uplink V4"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip6 nexthdr udp ct state new counter accept comment "forward new udp to uplink V6"
 # jump to application rules
 add rule  inet filter forward counter jump forward_apprules comment "forward app rules"
 # log and drop invalid packets separately

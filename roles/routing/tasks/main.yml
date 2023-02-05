@@ -5,10 +5,12 @@
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
   when: ansible_facts['os_family'] != "Debian"
 
-- name: Add routing option to sysctl
+- name: Add routing options to sysctl
   ansible.builtin.copy:
     content: |
       # Enable IPv4 routing on all interfaces
       net.ipv4.ip_forward=1
+      # Enable IPv6 routing on all interfaces
+      net.ipv6.conf.all.forwarding=1
     dest: /etc/sysctl.d/local.conf
   notify: Restart sysctl

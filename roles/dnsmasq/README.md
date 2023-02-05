@@ -7,7 +7,7 @@ by the `openvpn` role.
 
 ## Variables
 
-To be set in `host_vars`:
+To be set in `host_vars`, checkout `mimas99.yml` for examples.
 
 * `dnsmasq_except_interface`: you don't want dnsmasq to serve the upstream interface, should be set to the same value as `nft_upstream_interface`. While DHCP is usually not desired on the vpn, DNS is. See the `nft` rules below.
 
