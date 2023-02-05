@@ -2,8 +2,10 @@
 {% for vlanif in vlanifs %}
 auto {{ vlanif.baseif }}.{{ vlanif.number }}
 iface {{ vlanif.baseif }}.{{ vlanif.number }} inet static
-    address {{ vlanif.address }}
-    netmask {{ vlanif.netmask }}
-    broadcast {{ vlanif.broadcast }}
-{% endfor %}
+    address {{ vlanif.v4info.address }}
+    netmask {{ vlanif.v4info.netmask }}
+    broadcast {{ vlanif.v4info.broadcast }}
 
+iface {{ vlanif.baseif }}.{{ vlanif.number }} inet6 static
+    address {{ vlanif.v6info.address }}
+{% endfor %}
