@@ -71,12 +71,14 @@ dnsmasq_dhcp_search_domain_names:
 dnsmasq_dhcp_staticips_source: ~/staticips
 
 dnsmasq_dhcp_ranges:
-  - name: LAN
-    range: "172.30.0.100,172.30.0.199"
-    leasetime: "24h"
-  - name: WLAN
-    range: "172.27.0.10,172.27.0.199"
-    leasetime: "12h"
+  - name: LANv4
+    rangeline: "172.30.0.100,172.30.0.199,24h"
+  - name: LANv6
+    rangeline: "2001:db8:1234:6f0::1:1,2001:db8:1234:6f0::ffff:1,ra-names,64,24h"
+  - name: WLANv4
+    range: "172.27.0.10,172.27.0.199,12h"
+  - name: WLANv6
+    rangeline: "2001:db8:1234:6f1::1:1,2001:db8:1234:6f1::ffff:1,ra-names,64,24h"
 
 # afraid role
 

@@ -24,5 +24,5 @@ dhcp-option=option:domain-search{% for domain in dnsmasq_dhcp_search_domain_name
 
 {% for dhcprange in dnsmasq_dhcp_ranges %}
 # {{ dhcprange.name }}:
-dhcp-range={{ dhcprange.range }},{{ dhcprange.leasetime }}
+dhcp-range={{ dhcprange.rangeline }}
 {% endfor %}
