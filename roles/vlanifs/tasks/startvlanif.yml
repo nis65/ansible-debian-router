@@ -10,12 +10,19 @@
   ansible.builtin.debug:
     msg: "Running restart checks for vlan if {{ fullifname }}"
 
-- name: get current ip from ansible_facts
+- name: check if interface in ansible_facts
   ansible.builtin.set_fact:
-    currentip: "{{ ansible_facts[fullifname].ipv4.address | default('NOIP') }}"
+    facts_interface: '{{ ansible_facts[fullifname] | default("undefined") }}'
+    currentv4ip: 'noV4'
+    currentv6ip: 'noV6'
+
+- name: get current ipv4 from ansible_facts
+  ansible.builtin.set_fact:
+    currentv4ip: "{{ facts_interface.ipv4.address }}"
+    currentv6ip: '{{ facts_interface.ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) | first | default("NoV6") }}/{{ facts_interface.ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="prefix" ) | first | default("NoPrefix") }}'
+  when: facts_interface != "undefined"
 
 - name: restart bridge interface if config changed or wrong IP-address
   ansible.builtin.shell:
     cmd: "ifdown {{ fullifname }}; ifup {{ fullifname }}"
-  when: ( currentip != item.address ) or configvlan.changed
-
+  when: ( currentv4ip != item.v4info.address ) or (currentv6ip != item.v6info.address) or configvlan.changed

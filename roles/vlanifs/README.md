@@ -12,9 +12,12 @@
 vlanifs:
   - number: "700"
     baseif: "br0"
-    address: 172.27.0.1
-    netmask: 255.255.255.0
-    broadcast: 172.27.0.255
+    v4info:
+      address: 172.27.0.1
+      netmask: 255.255.255.0
+      broadcast: 172.27.0.255
+    v6info:
+      address: 2001:db8:1234:6f1::1/64
 ```
 
 creates `/etc/network/interfaces.d/vlanifs` with the following content:
@@ -25,6 +28,10 @@ iface br0.700 inet static
     address 172.27.0.1
     netmask 255.255.255.0
     broadcast 172.27.0.255
+
+iface br0.500 inet6 static
+    address 2001:db8:1234:6f1::1/64
+
 ```
 
 ## Implementation notes
