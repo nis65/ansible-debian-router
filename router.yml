@@ -18,13 +18,13 @@
   hosts: mimas
   become: true
   roles:
-  #- upv6if
-  #- bridges
-  #- vlanifs
+  - upv6if
+  - bridges
+  - vlanifs
   - nft
-  #- fail2ban
-  #- routing
-  #- dnsmasq
-  #- openvpn
-  #- afraid
-  #- unifi
+  - fail2ban
+  - routing
+  - dnsmasq
+  - openvpn
+  - afraid
+  - unifi
