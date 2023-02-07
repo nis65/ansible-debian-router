@@ -106,14 +106,10 @@ add rule  inet filter forward meta l4proto      icmp counter accept comment "for
 add rule  inet filter forward meta l4proto ipv6-icmp counter accept comment "forward icmpv6"
 add rule  inet filter forward ct state established, related counter accept comment "forward all returns"
 # add packets allowed from downstream interfaces to downstream and upstream interfaces (aka local_interfaces)
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol tcp counter accept comment "forward stateless tcp V4"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip6 nexthdr tcp counter accept comment "forward stateless tcp V6"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip protocol udp counter accept comment "forward stateless udp V4"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces ip6 nexthdr udp counter accept comment "forward stateless udp V6"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol tcp ct state new counter accept comment "forward new tcp to uplink V4"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip6 nexthdr tcp ct state new counter accept comment "forward new tcp to uplink V6"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip protocol udp ct state new counter accept comment "forward new udp to uplink V4"
-add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} ip6 nexthdr udp ct state new counter accept comment "forward new udp to uplink V6"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces meta l4proto tcp counter accept comment "forward stateless tcp"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname @downstream_interfaces meta l4proto udp counter accept comment "forward stateless udp"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} meta l4proto tcp ct state new counter accept comment "forward new tcp to uplink"
+add rule  inet filter forward meta iifname @downstream_interfaces meta oifname {{ nft_upstream_interface }} meta l4proto udp ct state new counter accept comment "forward new udp to uplink"
 # jump to application rules
 add rule  inet filter forward counter jump forward_apprules comment "forward app rules"
 # log and drop invalid packets separately
