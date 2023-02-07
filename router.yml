@@ -3,6 +3,7 @@
   hosts: mimas99
   become: true
   roles:
+  #- upv6if
   #- bridges
   #- vlanifs
   #- nft
@@ -17,12 +18,13 @@
   hosts: mimas
   become: true
   roles:
-  - bridges
-  - vlanifs
+  #- upv6if
+  #- bridges
+  #- vlanifs
   - nft
-  - fail2ban
-  - routing
-  - dnsmasq
-  - openvpn
-  - afraid
-  - unifi
+  #- fail2ban
+  #- routing
+  #- dnsmasq
+  #- openvpn
+  #- afraid
+  #- unifi
