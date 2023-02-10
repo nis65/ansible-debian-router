@@ -26,6 +26,9 @@ bridges:
           gw: 172.30.0.134
     v6info:
       address: 2001:db8:1234:6f0::1/64
+      routes:
+        - target: 2001:db8:1234:6ff::1/64
+          gw: 2001:db8:1234:6f0::f
 
 # vlanifs role
 
