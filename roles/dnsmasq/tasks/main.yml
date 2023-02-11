@@ -29,6 +29,7 @@
     dest: /etc/dnsmasq.d/localconf
     backup: no
   notify: Restart dnsmasq
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: ensure some static hosts file is present
   ansible.builtin.copy:

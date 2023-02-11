@@ -8,6 +8,9 @@ cert server.crt
 key server.key  # This file should be kept secret
 dh dh2048.pem
 server {{ openvpn_server_ip }} {{ openvpn_server_mask }}
+{% if openvpn_server_ipv6 is defined %}
+server-ipv6 {{ openvpn_server_ipv6 }}
+{% endif %}
 ifconfig-pool-persist /var/log/openvpn/ipp.txt {{ openvpn_write_ipp_sec }}
 keepalive 10 120
 cipher AES-256-CBC
@@ -17,6 +20,11 @@ status /var/log/openvpn/openvpn-status.log
 {% for network in openvpn_pushroutes %}
 push "route {{ network.address }} {{ network.mask }}"
 {% endfor %}
+{% if openvpn_pushroutes_ipv6 is defined %}
+{% for ipv6network in openvpn_pushroutes_ipv6 %}
+push "route-ipv6 {{ ipv6network.address }}"
+{% endfor %}
+{% endif %}
 verb {{ openvpn_verb }}
 explicit-exit-notify 1
 # Added to default

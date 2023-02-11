@@ -20,9 +20,9 @@ iface {{ bridge.name }} inet6 static
     bridge_ports{% for interface in bridge.members %} {{ interface }}{% endfor %}
 
     address {{ bridge.v6info.address }}
-    {% for route in bridge.v6info.routes %}up ip -6 route add {{ route.target }} via {{ route.gw }}
+    {% if bridge.v6info.routes is defined %}
+{% for route in bridge.v6info.routes %}up ip -6 route add {{ route.target }} via {{ route.gw }}
     down ip -6 route del {{ route.target }} via {{ route.gw }}
     {% endfor %}
-
-
+    {% endif %}
 {% endfor %}
