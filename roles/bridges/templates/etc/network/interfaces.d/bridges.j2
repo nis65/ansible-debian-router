@@ -21,9 +21,8 @@ iface {{ bridge.name }} inet6 static
 
     address {{ bridge.v6info.address }}
     {% if bridge.v6info.routes is defined %}
-    {% for route in bridge.v6info.routes %}up ip -6 route add {{ route.target }} via {{ route.gw }}
+{% for route in bridge.v6info.routes %}up ip -6 route add {{ route.target }} via {{ route.gw }}
     down ip -6 route del {{ route.target }} via {{ route.gw }}
     {% endfor %}
     {% endif %}
-
 {% endfor %}

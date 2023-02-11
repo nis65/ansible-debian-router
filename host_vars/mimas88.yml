@@ -1,15 +1,23 @@
 # upv6if role
 
-upv6if_expected_delegation: "2001:db8:1234:6f0::/60"
-
 upv6if_iface: enp1s0
-upv6if_mode: dhcp
+##  With prefix delegation (PROD)
+#
+#upv6if_expected_delegation: "2001:db8:1234:6f0::/60"
+#
+#upv6if_mode: dhcp
+#upv6if_configlines:
+#  - "request_prefix 1"
+#  - "accept_ra 2"
+
+##  With static IPv6 (TEST)
+
+upv6if_mode: static
 upv6if_configlines:
-  - "request_prefix 1"
+  - "address 2001:db8:1234:6f0::2/64"
   - "accept_ra 2"
 
 # bridges role
-
 bridges:
   - name: "br0"
     members:
@@ -22,13 +30,10 @@ bridges:
       routes:
         - target: 10.10.10.0/24
           gw: 172.30.0.134
-        - target: 10.10.20.0/24
-          gw: 172.30.0.134
     v6info:
-      address: 2001:db8:1234:6f0::1/64
-      routes:
-        - target: 2001:db8:1234:6ff::1/64
-          gw: 2001:db8:1234:6f0::f
+      address: 2001:db8:1234:6f2::1/64
+      # v6 routes, not used in lab
+      # routes:
 
 # vlanifs role
 
@@ -39,8 +44,9 @@ vlanifs:
       address: 172.27.0.1
       netmask: 255.255.255.0
       broadcast: 172.27.0.255
-    v6info:
-      address: 2001:db8:1234:6f1::1/64
+    # not used in lab
+    #v6info:
+    #  address: 
 
 # nft role
 
@@ -77,16 +83,17 @@ dnsmasq_dhcp_ranges:
   - name: LANv4
     rangeline: "172.30.0.100,172.30.0.199,24h"
   - name: LANv6
-    rangeline: "2001:db8:1234:6f0::1:1,2001:db8:1234:6f0::ffff:1,ra-names,64,24h"
-  - name: WLANv4
-    range: "172.27.0.10,172.27.0.199,12h"
-  - name: WLANv6
-    rangeline: "2001:db8:1234:6f1::1:1,2001:db8:1234:6f1::ffff:1,ra-names,64,24h"
+    rangeline: "2001:db8:1234:6f2::1:1,2001:db8:1234:6f2::ffff:1,ra-names,64,24h"
+  # not used in lab
+  #- name: WLAN
+  #  range: "172.27.0.10,172.27.0.199"
+  #  leasetime: "12h"
 
-# afraid role
+# afraid role, not applicable on test machines without 
+# direct internet connectivity
 
-afraid_external_vpn_interface: enp1s0
-afraid_domain_name: example.domain.com
+# afraid_external_vpn_interface: enp1s0
+# afraid_domain_name: example.domain.com
 
 # openvpn role
 
@@ -94,6 +101,7 @@ openvpn_server_interfaces:
   - enp1s0
 openvpn_server_ip: 10.8.0.0
 openvpn_server_mask: 255.255.255.0
+openvpn_server_ipv6: 2001:db8:1234:6f3::1/64
 openvpn_server_name: mimasvpn
 openvpn_dhfile_source: ~/vpnsecrets/dh.pem
 openvpn_cafile_source: ~/vpnsecrets/ca.crt
@@ -105,6 +113,9 @@ openvpn_pushroutes:
     mask: 255.255.254.0
   - address: 172.27.0.1
     mask: 255.255.255.0
+
+openvpn_pushroutes_ipv6:
+  - address: 2001:db8:1234:6f0::/60
 
 openvpn_client_options:
   - name: zeta
@@ -130,19 +141,21 @@ openvpn_nft_targets_smb:
 openvpn_nft_targets_imaps:
   - 172.30.0.126
 
+# can only refer to hosts that had a successful openvpn connect once 
+# i.e. are in ipp.txt
 openvpn_nft_client_rules:
   - name: localhost_dns
     clients:
       - lambda
-      - alpha
+      #- alpha
   - name: localhost_ssh
     clients:
       - lambda
-      - alpha
+      #- alpha
   - name: localhost_unifi
     clients:
       - lambda
-      - zeta
+      #- zeta
   - name: localnet_ssh
     clients:
       - lambda
@@ -160,4 +173,5 @@ openvpn_nft_nbd_source_ipv4: 172.30.0.17
 openvpn_nft_service_rules:
   - name: client_nbd
     clients:
-      - gamma
+      - lambda
+
