@@ -30,11 +30,11 @@
     line: "    iaprefix {{ upv6if_expected_delegation }} {"
     state: present
     path: "/var/lib/dhcp/dhclient6.{{upv6if_iface}}.leases"
+  when: upv6if_expected_delegation is defined
   check_mode: yes
   register: delegation_subnet
 
-- name: Abort if configured delegated subnet not found in leases file
+- name: Abort if delegated subnet configured but not found in leases file
   ansible.builtin.fail:
     msg: "Expected delegated subnet {{ upv6if_expected_delegation }} not found on target /var/lib/dhcp/dhclient6.{{ upv6if_iface }}.leases, fix this first!"
   when: delegation_subnet is changed
--

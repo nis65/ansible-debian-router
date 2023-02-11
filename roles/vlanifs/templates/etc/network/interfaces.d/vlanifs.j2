@@ -6,6 +6,8 @@ iface {{ vlanif.baseif }}.{{ vlanif.number }} inet static
     netmask {{ vlanif.v4info.netmask }}
     broadcast {{ vlanif.v4info.broadcast }}
 
+{% if vlanif.v6info.address is defined %}
 iface {{ vlanif.baseif }}.{{ vlanif.number }} inet6 static
     address {{ vlanif.v6info.address }}
+{% endif %}
 {% endfor %}

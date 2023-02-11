@@ -13,16 +13,29 @@
 - name: check if interface in ansible_facts
   ansible.builtin.set_fact:
     facts_interface: '{{ ansible_facts[fullifname] | default("undefined") }}'
-    currentv4ip: 'noV4'
-    currentv6ip: 'noV6'
+    currentv4ip: 'noV4iface'
+    currentv6ip: 'noV6iface'
 
 - name: get current ipv4 from ansible_facts
   ansible.builtin.set_fact:
     currentv4ip: "{{ facts_interface.ipv4.address }}"
-    currentv6ip: '{{ facts_interface.ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) | first | default("NoV6") }}/{{ facts_interface.ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="prefix" ) | first | default("NoPrefix") }}'
   when: facts_interface != "undefined"
+
+- name: check whether we have ipv6 in ansible_facts
+  ansible.builtin.set_fact:
+    currentv6ip: "noV6addr"
+  when: facts_interface != "undefined" and facts_interface.ipv6 is not defined
+
+- name: get current ipv6 from ansible_facts
+  ansible.builtin.set_fact:
+    currentv6ip: '{{ facts_interface.ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) | first | default("NoV6") }}/{{ facts_interface.ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="prefix" ) | first | default("NoLen") }}'
+  when: facts_interface != "undefined" and currentv6ip != "noV6addr"
+
+- name: get current ipv6 from config
+  ansible.builtin.set_fact:
+    configv6ip: "{{ item.v6info.address | default ('noV6addr') }}"
 
 - name: restart bridge interface if config changed or wrong IP-address
   ansible.builtin.shell:
     cmd: "ifdown {{ fullifname }}; ifup {{ fullifname }}"
-  when: ( currentv4ip != item.v4info.address ) or (currentv6ip != item.v6info.address) or configvlan.changed
+  when: ( currentv4ip != item.v4info.address ) or (currentv6ip != configv6ip ) or configvlan.changed
