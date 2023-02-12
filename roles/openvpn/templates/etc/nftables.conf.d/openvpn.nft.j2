@@ -18,11 +18,18 @@ add rule inet filter forward_apprules meta oifname tun0 tcp dport { 22, 2222 } c
 include "/etc/nftables.conf.d/clients.openvpn"
 
 # sets for selected targets in local networks
-add set inet filter smb_targets { type ipv4_addr ; }
-add set inet filter imaps_targets { type ipv4_addr ; }
-{% for ip in openvpn_nft_targets_smb %}
-add element inet filter smb_targets { {{ ip }} }
+add set inet filter vpn_smb_targets_v4 { type ipv4_addr ; }
+add set inet filter vpn_smb_targets_v6 { type ipv6_addr ; }
+{% for ip in openvpn_nft_targets_smb.v4info %}
+add element inet filter vpn_smb_targets_v4 { {{ ip }} }
 {% endfor %}
+{% if openvpn_nft_targets_smb.v6info is defined %}
+{% for ip in openvpn_nft_targets_smb.v6info %}
+add element inet filter vpn_smb_targets_v6 { {{ ip }} }
+{% endfor %}
+{% endif %}
+
+add set inet filter imaps_targets { type ipv4_addr ; }
 {% for ip in openvpn_nft_targets_imaps %}
 add element inet filter imaps_targets { {{ ip }} }
 {% endfor %}
@@ -32,7 +39,8 @@ add set inet filter from_vpn_to_localhost_dns { type ipv4_addr ; }
 add set inet filter from_vpn_to_localhost_ssh { type ipv4_addr ; }
 add set inet filter from_vpn_to_localhost_unifi { type ipv4_addr ; }
 add set inet filter from_vpn_to_localnet_ssh { type ipv4_addr ; }
-add set inet filter from_vpn_to_localnet_smb { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_smb_v4 { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_smb_v6 { type ipv6_addr ; }
 add set inet filter from_vpn_to_localnet_music { type ipv4_addr ; }
 add set inet filter from_vpn_to_localnet_imaps { type ipv4_addr ; }
 # not yet implemented
@@ -43,7 +51,11 @@ add set inet filter from_vpn_to_localnet_imaps { type ipv4_addr ; }
 # map client names to the host sets for the service specific rules
 {% for ruleset in openvpn_nft_client_rules %}
 {% for clientname in ruleset.clients %}
+{% if ruleset.name == 'localnet_smb' %}
+add element inet filter from_vpn_to_{{ ruleset.name }}_v4 { ${{ clientname }}_v4 }
+{% else %}
 add element inet filter from_vpn_to_{{ ruleset.name }} { ${{ clientname }}_v4 }
+{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -63,7 +75,8 @@ add rule inet filter input_apprules meta iifname tun0 ip saddr @from_vpn_to_loca
 # Stateful forward rules to enable whitelisted vpn clients to use services on localnets
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_ssh tcp dport { 22, 2222 } ct state new counter accept comment "forward vpn client ssh"
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_music tcp dport { 1704, 1705, 1780, 6600 } ct state new counter accept comment "forward vpn client music"
-add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_smb ip daddr @smb_targets tcp dport { 139, 445 } ct state new counter accept comment "forward vpn client smb"
+add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_smb_v4 ip daddr @vpn_smb_targets_v4 tcp dport { 139, 445 } ct state new counter accept comment "forward vpn client smb v4"
+add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip6 saddr @from_vpn_to_localnet_smb_v6 ip6 daddr @vpn_smb_targets_v6 tcp dport { 139, 445 } ct state new counter accept comment "forward vpn client smb v6"
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_imaps ip daddr @imaps_targets tcp dport { 993 } ct state new counter accept comment "forward vpn client imaps"
 
 # Stateful forward rules to enable some hosts to use services on whitelisted vpn clients

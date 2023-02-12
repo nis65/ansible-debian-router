@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-# TODO: Properly test and activate IPv6. It should all be there.
-
 VPNDOMAIN="{{ openvpn_dns_domain }}"
 
 IPPSOURCE=/var/log/openvpn/ipp.txt
@@ -32,7 +30,7 @@ do
     if [[ "$CURNAME" != "NONE" ]]
     then
       echo "define ${CURNAME}_v4 = { ${CURV4}}" >> $NFTTMP
-      echo "#define ${CURNAME}_v6 = { ${CURV6}}" >> $NFTTMP
+      echo "define ${CURNAME}_v6 = { ${CURV6}}" >> $NFTTMP
     fi
     CURNAME=$name
     CURV4="${ipv4}, "
