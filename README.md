@@ -3,7 +3,7 @@ I am using a debian based firewall as home router since
 decades. The first thing I do to the router as received
 from my internet provider is to switch it into bridge mode
 and connect my debian router. I am using hardware from
-`pcengines.ch`. I started with WRAP, used ALIX and now 
+`pcengines.ch`. I started with WRAP, used ALIX and now
 it is an [APU2](https://pcengines.ch/apu2.htm).
 
 Instead of updating and redoing lots of detailed documentation, I decided
@@ -13,6 +13,7 @@ managed debian bullseye router is in production since January 2nd 2023.
 The goals of this project were:
 * do a (functionally equivalent) lifecycle, i.e. sidegrade from stretch to bullseye.
 * switch from iptables to native nftables.
+* full IPv4 and IPv6 support.
 * automate the installation and configuration with ansible.
 * all important parameters needed to describe the target system should be in one place. This helps managing the configuration and eases testing.
 * practise ansible and learn nftables.
@@ -45,7 +46,7 @@ have a console access ready to save you from shooting yourself in the foot.
    * tun0: the openvpn interface
 * nftables for packet filtering/masquerading
 * dnsmasq for dns/dhcp
-* unifi software and hardware, hardware managed on br0, WLAN client traffic on tagged VLAN
+* unifi software and hardware, hardware managed on br0, WLAN client traffic on tagged VLAN 
 * openvpn with client specific access configuration (both vpn and nft)
 
 ### ansible vs manual
@@ -65,7 +66,6 @@ All other configuration is done by ansible.
 
 ### Wishlist
 
-* Full IPv6 support: upstream interface, bridge, vlan, nft, routing, dnsmasq, openvpn. The poor integration of IPv6 in stretch compared to bullseye was one of the main drivers for me to finally attack this sidegrade.
 * asterisk
 
 ## Roles
@@ -91,7 +91,7 @@ without interfering with the main config file or with each other. The
 * **routing**: enables routing.
 
 * **dnsmasq**: installs and configures `dnsmasq` providing both
-a (IPv4) dhcp and dns server for the downstream interfaces.
+a dhcp and dns server for the downstream interfaces.
 Provides a `nft` drop in file.
 
 ### applications: openvpn, unifi
