@@ -137,9 +137,13 @@ openvpn_client_push_dns:
 openvpn_dns_domain: vpn.example.net
 
 openvpn_nft_targets_smb:
-  - 172.30.0.126
+  v4info:
+    - 172.30.0.126
+  #v6info:
 openvpn_nft_targets_imaps:
-  - 172.30.0.126
+  v4info:
+    - 172.30.0.126
+  #v6info:
 
 # can only refer to hosts that had a successful openvpn connect once 
 # i.e. are in ipp.txt

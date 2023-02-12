@@ -22,6 +22,7 @@ To be set in `host_vars`:
 * `openvpn_server_interfaces`: a list of interfaces where connects are accepted. Usually at least the upstream interface, e.g. `enp1s0`.
 * `openvpn_server_ip`: subnet where vpn clients get their ip from, e.g. 10.8.0.0
 * `openvpn_server_mask`: e.g. 255.255.255.0
+* `openvpn_server_ipv6`: e.g. 2001:db8:1234:6f3::1/64
 * `openvpn_server_name`: Currently used for systemd service name only
 * Four pointers to crypto files on the **ansible host** (these files must be present to run ansible, but the content is only used when the file is not present on the target yet).
     * `openvpn_dhfile_source`, e.g. `~/vpnsecrets/dh.pem`
@@ -36,6 +37,7 @@ openvpn_pushroutes:
   - address: 172.27.0.1
     mask: 255.255.255.0
 ~~~
+* `openvpn_pushroutes_ipv6`: similar to the IPv4 version above, except that only prefixed `address:` is needed, e.g. `2001:db8:1234:6f0::/60`
 * `openvpn_client_options`: client specific configuration. `options` are added line by line to the client config file, if `dnsoptions` is set to `yes`, the DNS server information is pushed (see next variable). `name` matches the name in the client certificate and is mandatory, the other two are optional:
 ~~~
 openvpn_client_options:
@@ -61,8 +63,16 @@ openvpn_client_push_dns:
     - myotherdomain.ch
 ~~~
 * `openvpn_dns_domain`: the domain name that should be appended to the hostname as defined in the client certificate. This is used to add the vpn client names to the dnsmasq host list.
-* `openvpn_nft_targets_smb`: a list of target ip adresses of `smb` servers in your local network you want give access to at least one vpn client
-* `openvpn_nft_targets_imaps`: a list of target ip adresses of `imaps` servers in your local network you want give access to at least one vpn client
+* `openvpn_nft_targets_smb`: a dict of two lists, one for IPv4, the other for IPv6 addresses. These ar tarrget ip adresses of `smb` servers in your local network you want give access to at least one vpn client
+~~~
+openvpn_nft_targets_smb:
+  v4info:
+    - 172.30.0.126
+  v6info:
+    - 2001:db8:1234:6f0::1234
+~~~
+
+* `openvpn_nft_targets_imaps`: similar to `openvpn_nft_targets_smb`, but affects the imaps port.
 * `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. 
    * **WARNING** The client names **must** be `define`d  in that jinja template (e.g. `define zeta_v4 = { 10.8.0.99 }`), otherwise an invalid nftables configuration is generated.
 ~~~
