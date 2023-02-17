@@ -46,7 +46,7 @@
     state: directory
     mode: '0755'
 
-- name: Propagate nft reloads to fail2ban
+- name: Never reload, always restart fail2ban to propagate nft reloads properly
   ansible.builtin.copy:
     src: etc/systemd/system/fail2ban.service.d/override.conf
     dest: /etc/systemd/system/fail2ban.service.d/override.conf
