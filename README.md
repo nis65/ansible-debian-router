@@ -1,8 +1,10 @@
 # ansible-debian-router
 I am using a debian based firewall as home router since
-decades. The first thing I do to the router as received
-from my internet provider is to switch it into bridge mode
-and connect my debian router. I am using hardware from
+decades. The first thing I do to the connection device received
+from my internet provider is to switch it into plain bridge mode
+so that signal conversion only is done by that device. 
+Then I connect my debian router so that all routing/filtering 
+is done there - fully under my control. I am using hardware from
 `pcengines.ch`. I started with WRAP, used ALIX and now
 it is an [APU2](https://pcengines.ch/apu2.htm).
 
@@ -16,7 +18,7 @@ The goals of this project were:
 * full IPv4 and IPv6 support.
 * automate the installation and configuration with ansible.
 * all important parameters needed to describe the target system should be in one place. This helps managing the configuration and eases testing.
-* practise ansible and learn nftables.
+* practise ansible and nftables.
 
 The implemented roles are very specific to my personal use case. I wanted
 to keep the roles as simple as possible, i.e. propagate application configuration
@@ -29,11 +31,11 @@ variable must match the ip address of an interface (assigned using
 a `bridges`  or `vlanifs` variable). But it keeps the roles as independent
 of each other as possible.
 
-There is no validation on the parameters at all. It is easily possible
+There is no validation on the parameters at all. You can easily
 break the system with one wrong configuration setting. You have to 
 know what you are doing.
 
-**WARNING**: I managed to lock me out at least once during the development, so always
+**WARNING**: I managed to lock me out at least once during development, so always
 have a console access ready to save you from shooting yourself in the foot.
 
 ## My home router
@@ -70,7 +72,17 @@ All other configuration is done by ansible.
 
 ## Roles
 
+All roles fully support both IPv4 and IPv6. In some places, IPv6 is optional.
+
+### Uplink IPv6
+
+This playbook does not touch the **IPv4** configuration of the **uplink** interface,
+as at least one interface must work to be able to apply ansible at all. But: 
+
+* **upv6if**: configures IPv6 with (or without) subnet delegation on the uplink interface.
+
 ### Virtual interfaces
+
 I just need one bridge and one vlan interface, but both roles support
 the creation of multiple bridges or multiple vlan interfaces:
 
