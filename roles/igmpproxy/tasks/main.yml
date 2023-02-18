@@ -1,0 +1,67 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Add nft rules for igmp traffic
+  ansible.builtin.template:
+    src: etc/nftables.conf.d/igmpproxy.nft.j2
+    dest: /etc/nftables.conf.d/igmpproxy.nft
+    backup: no
+  notify: Restart nftables for igmpproxy
+
+- name: Install igmpproxy
+  ansible.builtin.apt:
+    name: igmpproxy
+    state: present
+
+- name: configure igmpproxy
+  ansible.builtin.template:
+    src: etc/igmpproxy.conf.j2
+    dest: /etc/igmpproxy.conf
+    backup: no
+  notify: Restart igmpproxy
+
+## - name: Config fail2ban to use nftables
+##   ansible.builtin.copy:
+##     src: etc/fail2ban/jail.local
+##     dest: /etc/fail2ban/jail.local
+##   notify: Restart fail2ban
+## 
+## - name: Add filter rule for openvpn
+##   ansible.builtin.copy:
+##     src: etc/fail2ban/filter.d/openvpn.local
+##     dest: /etc/fail2ban/filter.d/openvpn.local
+##   notify: Restart fail2ban
+## 
+## - name: Configure jail for openvpn
+##   ansible.builtin.template:
+##     src: etc/fail2ban/jail.d/openvpn.local.j2
+##     dest: /etc/fail2ban/jail.d/openvpn.local
+##   notify: Restart fail2ban
+## 
+## - name: Config fail2ban nftables to add counters and add udp
+##   ansible.builtin.copy:
+##     src: etc/fail2ban/action.d/nftables.local
+##     dest: /etc/fail2ban/action.d/nftables.local
+##   notify: Restart fail2ban
+## 
+## - name: Configure jail for recidive
+##   ansible.builtin.template:
+##     src: etc/fail2ban/jail.d/recidive.local.j2
+##     dest: /etc/fail2ban/jail.d/recidive.local
+##   notify: Restart fail2ban
+## 
+## - name: Create systemd override directory for fail2ban
+##   ansible.builtin.file:
+##     path: /etc/systemd/system/fail2ban.service.d
+##     state: directory
+##     mode: '0755'
+## 
+## - name: Never reload, always restart fail2ban to propagate nft reloads properly
+##   ansible.builtin.copy:
+##     src: etc/systemd/system/fail2ban.service.d/override.conf
+##     dest: /etc/systemd/system/fail2ban.service.d/override.conf
+##   notify: Restart fail2ban
