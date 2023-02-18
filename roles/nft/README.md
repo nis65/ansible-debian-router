@@ -43,7 +43,7 @@ The base configuration goes to `/etc/nftables.conf` and configures the following
     * ICMP/ICMPv6 is always allowed (you might want to be more strict on that)
     * **TODO** document/test igmp
     * return packets are always allowed (i.e. they can be associated with an earlier packet, stateful!)
-    * DHCPrequests from the upstream interface (and its replies) are always allowed (stateless)
+    * DHCP requests from the upstream interface (and its replies) are always allowed (stateless)
 * The `input` and `output` chains jump to an application rule sub chain that is empty when only the `nft` role is executed
 * The last rule of these chains is a `log` rule, so all blocked packets are logged
 * A `masq` table with one `postrouting` rule to masquerade all traffic from the downstream interfaces to the upstream interface (stateful).
@@ -58,7 +58,7 @@ following roles to extend the firewall:
 * one or more ports can be added to a [set](https://wiki.nftables.org/wiki-nftables/index.php/Sets) of destination ports (`inet_service` in nft terms). The name of the set defines what kind of traffic will be allowed:
     * `input` or `output` (received packet or sent packet)
     * `tcp` or `udp`
-    * *no explicit interface* or `downstream` or `mgmt`: rule for all interfaces, only downstream or only mgmt interfaces
+    * *no explicit interface* or `downstream` or `mgmt`: A rule affects all interfaces or all `downstream` interfaces or all `mgmt` interfaces
     * examples:
         * `output_tcp_dports` is the list of destination tcp ports allowed to initiate a new connection over all interfaces.
         * `input_downstream_udp_dports` is the list of destination udp ports allowed to initiate a new connection over the downstream interfaces.
