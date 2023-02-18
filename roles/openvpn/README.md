@@ -8,7 +8,7 @@ This openvpn ansible role just covers my use case.
     * if they are missing, they are copied from the ansible host (see variable settings below). If you want to force a copy, just delete them on the target host before running the playbook.
 * Support for **client-config-dir** implemented
     * different levels of access by VPN clients:
-        * least privileged/always on: the client connects to the vpn automatically. This enables me to access it for remote management even if it is behind NAT. No DNS Server pushed.
+        * least privileged/always on: the client connects to the vpn automatically and is accessible via `ssh`. This enables me to do remote management even if it is behind NAT. No DNS Server pushed.
         * normal privileges: access to some local services (and other vpn clients).
         * full privileges: access to some local services and masquerading to the internet (not yet implemented)
     * if there is file in this directory whose name matches the name in the certificate, this will be executed by `openvpn`
@@ -37,7 +37,7 @@ openvpn_pushroutes:
   - address: 172.27.0.1
     mask: 255.255.255.0
 ~~~
-* `openvpn_pushroutes_ipv6`: similar to the IPv4 version above, except that only prefixed `address:` is needed, e.g. `2001:db8:1234:6f0::/60`
+* `openvpn_pushroutes_ipv6`: similar to the IPv4 version above, except that only prefixed `address:` (and no `mask`) is needed, e.g. `2001:db8:1234:6f0::/60`
 * `openvpn_client_options`: client specific configuration. `options` are added line by line to the client config file, if `dnsoptions` is set to `yes`, the DNS server information is pushed (see next variable). `name` matches the name in the client certificate and is mandatory, the other two are optional:
 ~~~
 openvpn_client_options:
@@ -109,10 +109,6 @@ Provided in `defaults`, can be overriden in `host_vars`
 * `openvpn_script_security`: 2
 
 ## Implementation notes
-
-As my IPv6 connectivity is just about to become reality, I cannot test this yet. Some of
-the IPv6 stuff is already here (best guess), some is completely missing.I can't give
-any promises about IPv6.
 
 There are much bigger ansible roles supporting openvpn out there.
 * [Rob's role](https://github.com/robertdebock/ansible-role-openvpn) is nice, but does not give me the control of the network settings I need.
