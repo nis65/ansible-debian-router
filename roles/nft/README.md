@@ -58,7 +58,7 @@ following roles to extend the firewall:
 * one or more ports can be added to a [set](https://wiki.nftables.org/wiki-nftables/index.php/Sets) of destination ports (`inet_service` in nft terms). The name of the set defines what kind of traffic will be allowed:
     * `input` or `output` (received packet or sent packet)
     * `tcp` or `udp`
-    * *no explicit interface* or `downstream` or `mgmt`: A rule affects all interfaces or all `downstream` interfaces or all `mgmt` interfaces
+    * *no explicit interface* or `downstream` or `mgmt`: A rule affects either all interfaces or all `downstream` interfaces or all `mgmt` interfaces
     * examples:
         * `output_tcp_dports` is the list of destination tcp ports allowed to initiate a new connection over all interfaces.
         * `input_downstream_udp_dports` is the list of destination udp ports allowed to initiate a new connection over the downstream interfaces.
