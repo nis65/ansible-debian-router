@@ -22,7 +22,7 @@ of a lot of steps and some are even on a remote node:
 Therefore, I decided against dynamic renumbering on the debian router
 in favor of defining that renumbering is the responsibility of the
 ansible playbook.  If I ever should lose "my" IPv6 subnet and get a
-new one, I'll have to adjust one single ansible variable and rerun
+new one, I'll have to adjust a few ansible variables and rerun
 the playbook.
 
 The last two tasks of the role actually check whether prefix delegation 
