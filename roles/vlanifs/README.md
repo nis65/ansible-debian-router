@@ -38,5 +38,10 @@ iface br0.500 inet6 static
 
 The playbook restarts an already running vlan interface (`ifdown`/`ifup`) when the configuration file needed a rewrite. This should probably be implemented as handler.
 
+A running VLAN interface remains down after a restart of the underlying interface. So whenever you restart eg `br0`, you need to start eg `br0.200` too. So:
+
+* Do not use a VLAN if for ansible ssh login, you might lose connectivity.
+* When playing with the bridge role, keep this role in the playbook too.
+
 Cleanup when renaming/deleting vlans is not tested. You have been warned.
 
