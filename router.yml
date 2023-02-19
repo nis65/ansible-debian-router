@@ -25,6 +25,7 @@
   - nft
   - fail2ban
   - routing
+  #- igmpproxy
   - dnsmasq
   - openvpn
   - afraid

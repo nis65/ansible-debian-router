@@ -11,7 +11,4 @@ add element inet filter igmp_interfaces { {{ iface }} }
 
 add rule inet filter input_apprules  meta iifname @igmp_interfaces ip protocol igmp counter accept comment "input igmp"
 add rule inet filter output_apprules meta oifname @igmp_interfaces ip protocol igmp counter accept comment "output igmp"
-# spotify port, to be moved to raspotify role?
-add rule inet filter input_apprules  meta iifname @igmp_interfaces udp sport { 57621 } udp dport { 57621 } counter accept comment "input spotify"
-add rule inet filter output_apprules meta oifname @igmp_interfaces udp sport { 57621 } udp dport { 57621 } counter accept comment "output spotify"
 
