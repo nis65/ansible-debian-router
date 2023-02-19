@@ -1,0 +1,12 @@
+quickleave
+
+{% for iface in igmpproxy_interfaces.disabled %}
+phyint {{ iface }} disabled
+{% endfor %}
+{% for iface in igmpproxy_interfaces.upstream %}
+phyint {{ iface }} upstream ratelimit 0 threshold 1
+{% endfor %}
+{% for iface in igmpproxy_interfaces.downstream %}
+phyint {{ iface }} downstream ratelimit 0 threshold 1
+{% endfor %}
+

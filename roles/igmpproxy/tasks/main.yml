@@ -1,0 +1,25 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Add nft rules for igmp traffic
+  ansible.builtin.template:
+    src: etc/nftables.conf.d/igmpproxy.nft.j2
+    dest: /etc/nftables.conf.d/igmpproxy.nft
+    backup: no
+  notify: Restart nftables for igmpproxy
+
+- name: Install igmpproxy
+  ansible.builtin.apt:
+    name: igmpproxy
+    state: present
+
+- name: configure igmpproxy
+  ansible.builtin.template:
+    src: etc/igmpproxy.conf.j2
+    dest: /etc/igmpproxy.conf
+    backup: no
+  notify: Restart igmpproxy

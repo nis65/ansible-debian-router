@@ -102,6 +102,8 @@ without interfering with the main config file or with each other. The
 
 * **routing**: enables routing.
 
+* **igmpproxy**: UNTESTED. I thought I need this, but I was wrong.
+
 * **dnsmasq**: installs and configures `dnsmasq` providing both
 a dhcp and dns server for the downstream interfaces.
 Provides a `nft` drop in file.

@@ -85,7 +85,6 @@ add rule  inet filter output ct state established, related counter accept commen
 # outgoing connects allowed on all interfaces
 add rule  inet filter output tcp dport @output_tcp_dports ct state new counter accept comment "output tcp"
 add rule  inet filter output udp dport @output_udp_dports ct state new counter accept comment "output udp"
-add rule  inet filter output ip protocol igmp counter accept comment "output igmp"
 # outgoing connects allowed on upstream interface
 add rule  inet filter output meta oifname {{ nft_upstream_interface }} udp sport { 68 } udp dport { 67 } counter accept comment "output upstream dhcp"
 # outgoing connects allowed on downstream interfaces

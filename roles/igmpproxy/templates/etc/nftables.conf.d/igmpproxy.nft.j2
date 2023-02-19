@@ -1,0 +1,14 @@
+## build rules for vpn server (encrypted traffic)
+# build set of igmp_interfaces
+add set inet filter igmp_interfaces { type ifname; }
+
+{% for iface in igmpproxy_interfaces.upstream %}
+add element inet filter igmp_interfaces { {{ iface }} }
+{% endfor %}
+{% for iface in igmpproxy_interfaces.downstream %}
+add element inet filter igmp_interfaces { {{ iface }} }
+{% endfor %}
+
+add rule inet filter input_apprules  meta iifname @igmp_interfaces ip protocol igmp counter accept comment "input igmp"
+add rule inet filter output_apprules meta oifname @igmp_interfaces ip protocol igmp counter accept comment "output igmp"
+
