@@ -1,0 +1,25 @@
+---
+
+- name: Exit play if os_family is not Debian
+  ansible.builtin.fail:
+    msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
+  when: ansible_facts['os_family'] != "Debian"
+
+- name: Add nft rules for avahi traffic
+  ansible.builtin.template:
+    src: etc/nftables.conf.d/avahi.nft.j2
+    dest: /etc/nftables.conf.d/avahi.nft
+    backup: no
+  notify: Restart nftables for avahi
+
+- name: Install avahi-daemon
+  ansible.builtin.apt:
+    name: avahi-daemon
+    state: present
+
+- name: configure avahi-daemon
+  ansible.builtin.template:
+    src: etc/avahi/avahi-daemon.conf.j2
+    dest: /etc/avahi/avahi-daemon.conf
+    backup: no
+  notify: Restart avahi-daemon

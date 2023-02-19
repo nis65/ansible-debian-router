@@ -1,0 +1,12 @@
+# build set of avahi_interfaces
+add set inet filter avahi_interfaces { type ifname; }
+
+{% for iface in avahi_interfaces %}
+add element inet filter avahi_interfaces { {{ iface }} }
+{% endfor %}
+
+add rule inet filter input_apprules  meta iifname @avahi_interfaces udp sport { 5353 } udp dport { 5353 } counter accept comment "input mdns"
+add rule inet filter output_apprules meta oifname @avahi_interfaces udp sport { 5353 } udp dport { 5353 } counter accept comment "output mdns"
+add rule inet filter input_apprules  meta iifname @avahi_interfaces udp sport { 57621 } udp dport { 57621 } counter accept comment "input spotify"
+add rule inet filter output_apprules meta oifname @avahi_interfaces udp sport { 57621 } udp dport { 57621 } counter accept comment "output spotify"
+
