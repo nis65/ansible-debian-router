@@ -26,6 +26,7 @@
   - fail2ban
   - routing
   #- igmpproxy
+  - avahi
   - dnsmasq
   - openvpn
   - afraid

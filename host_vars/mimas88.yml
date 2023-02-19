@@ -56,7 +56,14 @@ nft_downstream_interfaces:
   - br0
   - br0.700
 
-# unifi role: nothing host specific (until now)
+# fail2ban role: nothing host specific (until now)
+# routing role: nothing host specific (until now)
+
+# avahi role
+#
+avahi_interfaces:
+  - br0
+  - br0.700
 
 # dnsmasq role
 
@@ -179,3 +186,4 @@ openvpn_nft_service_rules:
     clients:
       - lambda
 
+# unifi role: nothing host specific (until now)
