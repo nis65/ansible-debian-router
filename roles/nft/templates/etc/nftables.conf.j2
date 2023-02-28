@@ -51,10 +51,10 @@ add rule  inet filter input ip6 daddr ff00::/8 counter accept comment "input ip6
 add rule  inet filter input ct state established,related counter accept comment "input all returns"
 # incoming connects allowed on all interfaces
 add rule  inet filter input tcp dport @input_tcp_dports ct state new counter accept comment "input tcp"
-add rule  inet filter input tcp dport @input_udp_dports ct state new counter accept comment "input udp"
+add rule  inet filter input udp dport @input_udp_dports ct state new counter accept comment "input udp"
 # incoming connects allowed on all local interfaces
-add rule  inet filter input meta iifname @local_interfaces tcp dport @input_local_tcp_dports ct state new counter accept comment "input tcp"
-add rule  inet filter input meta iifname @local_interfaces tcp dport @input_local_udp_dports ct state new counter accept comment "input udp"
+add rule  inet filter input meta iifname @local_interfaces tcp dport @input_local_tcp_dports ct state new counter accept comment "input local tcp"
+add rule  inet filter input meta iifname @local_interfaces udp dport @input_local_udp_dports ct state new counter accept comment "input local udp"
 # incoming connects allowed on upstream interface
 add rule  inet filter input meta iifname {{ nft_upstream_interface }} udp sport { 67 } udp dport { 68 } counter accept comment "input upstream dhcp"
 # incoming connects allowed on downstream interfaces

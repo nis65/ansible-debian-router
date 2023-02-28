@@ -84,8 +84,8 @@ add rule inet filter input_apprules meta iifname tun0 ip saddr @from_vpn_to_loca
 add rule inet filter input_apprules meta iifname tun0 ip6 saddr @from_vpn_to_localhost_dns_v6 tcp dport { 53 } ct state new counter accept comment "input vpn client dns tcp v6"
 add rule inet filter input_apprules meta iifname tun0 ip saddr @from_vpn_to_localhost_ssh_v4 tcp dport { 22 } ct state new counter accept comment "input vpn client ssh tcp v4"
 add rule inet filter input_apprules meta iifname tun0 ip6 saddr @from_vpn_to_localhost_ssh_v6 tcp dport { 22 } ct state new counter accept comment "input vpn client ssh tcp v6"
-add rule inet filter input_apprules meta iifname tun0 ip saddr @from_vpn_to_localhost_unifi_v4 tcp dport { 8443 } ct state new counter accept comment "input vpn client unifi udp v4"
-add rule inet filter input_apprules meta iifname tun0 ip6 saddr @from_vpn_to_localhost_unifi_v6 tcp dport { 8443 } ct state new counter accept comment "input vpn client unifi udp v6"
+add rule inet filter input_apprules meta iifname tun0 ip saddr @from_vpn_to_localhost_unifi_v4 tcp dport { 8443 } ct state new counter accept comment "input vpn client unifi tcp v4"
+add rule inet filter input_apprules meta iifname tun0 ip6 saddr @from_vpn_to_localhost_unifi_v6 tcp dport { 8443 } ct state new counter accept comment "input vpn client unifi tcp v6"
 # Stateful forward rules to enable whitelisted vpn clients to use services on localnets
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_ssh_v4 tcp dport { 22, 2222 } ct state new counter accept comment "forward vpn client ssh v4"
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip6 saddr @from_vpn_to_localnet_ssh_v6 tcp dport { 22, 2222 } ct state new counter accept comment "forward vpn client ssh v6"
