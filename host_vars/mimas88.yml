@@ -150,6 +150,9 @@ openvpn_nft_targets_smb:
 openvpn_nft_targets_imaps:
   v4info:
     - 172.30.0.126
+openvpn_nft_targets_nextcloud:
+  v4info:
+    - 172.30.0.126
   #v6info:
 
 # can only refer to hosts that had a successful openvpn connect once 
@@ -177,6 +180,9 @@ openvpn_nft_client_rules:
     clients:
       - lambda
   - name: localnet_imaps
+    clients:
+      - lambda
+  - name: localnet_nextcloud
     clients:
       - lambda
 
