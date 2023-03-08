@@ -185,11 +185,18 @@ openvpn_nft_client_rules:
   - name: localnet_nextcloud
     clients:
       - lambda
+  - name: vpn_unifi
+    clients:
+      - lambda
+
 
 openvpn_nft_nbd_source_ipv4: 172.30.0.17
 openvpn_nft_service_rules:
   - name: client_nbd
     clients:
       - lambda
+  - name: client_unifi
+    clients:
+      - zeta
 
 # unifi role: nothing host specific (until now)
