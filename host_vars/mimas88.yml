@@ -150,7 +150,7 @@ openvpn_nft_targets_smb:
 openvpn_nft_targets_imaps:
   v4info:
     - 172.30.0.126
-openvpn_nft_targets_nextcloud:
+openvpn_nft_targets_ucshttps:
   v4info:
     - 172.30.0.126
   #v6info:
@@ -182,7 +182,7 @@ openvpn_nft_client_rules:
   - name: localnet_imaps
     clients:
       - lambda
-  - name: localnet_nextcloud
+  - name: localnet_ucshttps
     clients:
       - lambda
   - name: vpn_unifi
