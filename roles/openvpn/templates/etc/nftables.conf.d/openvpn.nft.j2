@@ -17,7 +17,7 @@ add rule inet filter forward_apprules meta oifname tun0 tcp dport { 22, 2222 } c
 # map vpn client names (from certificates) (file is updated automatically from systemd openvpnmapping.path)
 include "/etc/nftables.conf.d/clients.openvpn"
 
-# sets for selected targets (smb, imaps, nextcloud)
+# sets for selected targets (smb, imaps, ucshttps)
 add set inet filter vpn_smb_targets_v4 { type ipv4_addr ; }
 add set inet filter vpn_smb_targets_v6 { type ipv6_addr ; }
 {% for ip in openvpn_nft_targets_smb.v4info %}
@@ -40,14 +40,14 @@ add element inet filter vpn_imaps_targets_v6 { {{ ip }} }
 {% endfor %}
 {% endif %}
 
-add set inet filter vpn_nextcloud_targets_v4 { type ipv4_addr ; }
-add set inet filter vpn_nextcloud_targets_v6 { type ipv6_addr ; }
-{% for ip in openvpn_nft_targets_nextcloud.v4info %}
-add element inet filter vpn_nextcloud_targets_v4 { {{ ip }} }
+add set inet filter vpn_ucshttps_targets_v4 { type ipv4_addr ; }
+add set inet filter vpn_ucshttps_targets_v6 { type ipv6_addr ; }
+{% for ip in openvpn_nft_targets_ucshttps.v4info %}
+add element inet filter vpn_ucshttps_targets_v4 { {{ ip }} }
 {% endfor %}
-{% if openvpn_nft_targets_nextcloud.v6info is defined %}
-{% for ip in openvpn_nft_targets_nextcloud.v6info %}
-add element inet filter vpn_nextcloud_targets_v6 { {{ ip }} }
+{% if openvpn_nft_targets_ucshttps.v6info is defined %}
+{% for ip in openvpn_nft_targets_ucshttps.v6info %}
+add element inet filter vpn_ucshttps_targets_v6 { {{ ip }} }
 {% endfor %}
 {% endif %}
 
@@ -66,8 +66,8 @@ add set inet filter from_vpn_to_localnet_music_v4 { type ipv4_addr ; }
 add set inet filter from_vpn_to_localnet_music_v6 { type ipv6_addr ; }
 add set inet filter from_vpn_to_localnet_imaps_v4 { type ipv4_addr ; }
 add set inet filter from_vpn_to_localnet_imaps_v6 { type ipv6_addr ; }
-add set inet filter from_vpn_to_localnet_nextcloud_v4 { type ipv4_addr ; }
-add set inet filter from_vpn_to_localnet_nextcloud_v6 { type ipv6_addr ; }
+add set inet filter from_vpn_to_localnet_ucshttps_v4 { type ipv4_addr ; }
+add set inet filter from_vpn_to_localnet_ucshttps_v6 { type ipv6_addr ; }
 add set inet filter from_vpn_to_vpn_unifi_v4 { type ipv4_addr ; }
 add set inet filter from_vpn_to_vpn_unifi_v6 { type ipv6_addr ; }
 # to be continued...
@@ -106,8 +106,8 @@ add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_inte
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip6 saddr @from_vpn_to_localnet_smb_v6 ip6 daddr @vpn_smb_targets_v6 tcp dport { 139, 445 } ct state new counter accept comment "forward vpn client smb v6"
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_imaps_v4 ip daddr @vpn_imaps_targets_v4 tcp dport { 993 } ct state new counter accept comment "forward vpn client imaps v4"
 add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip6 saddr @from_vpn_to_localnet_imaps_v6 ip6 daddr @vpn_imaps_targets_v6 tcp dport { 993 } ct state new counter accept comment "forward vpn client imaps v6"
-add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_nextcloud_v4 ip daddr @vpn_nextcloud_targets_v4 tcp dport { 443 } ct state new counter accept comment "forward vpn client nextcloud v4"
-add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip6 saddr @from_vpn_to_localnet_nextcloud_v6 ip6 daddr @vpn_nextcloud_targets_v6 tcp dport { 443 } ct state new counter accept comment "forward vpn client nextcloud v6"
+add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip saddr @from_vpn_to_localnet_ucshttps_v4 ip daddr @vpn_ucshttps_targets_v4 tcp dport { 443 } ct state new counter accept comment "forward vpn client ucshttps v4"
+add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_interfaces ip6 saddr @from_vpn_to_localnet_ucshttps_v6 ip6 daddr @vpn_ucshttps_targets_v6 tcp dport { 443 } ct state new counter accept comment "forward vpn client ucshttps v6"
 
 # Stateful forward rules to enable some hosts or networks to use services on whitelisted vpn clients
 add rule inet filter forward_apprules meta iifname @local_interfaces meta oifname tun0 ip saddr {{ openvpn_nft_nbd_source_ipv4 }} ip daddr @to_vpn_client_nbd tcp dport { 10809 } ct state new counter accept comment "forward vpn service nbd"
