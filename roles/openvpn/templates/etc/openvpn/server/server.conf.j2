@@ -3,6 +3,9 @@
 port {{ openvpn_port }}
 proto {{ openvpn_proto }}
 dev tun
+{% if openvpn_tls_version_min is defined %}
+tls-version-min {{ openvpn_tls_version_min }}
+{% endif %}
 ca ca.crt
 cert server.crt
 key server.key  # This file should be kept secret
