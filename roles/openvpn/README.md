@@ -20,6 +20,7 @@ This openvpn ansible role just covers my use case.
 To be set in `host_vars`:
 
 * `openvpn_server_interfaces`: a list of interfaces where connects are accepted. Usually at least the upstream interface, e.g. `enp1s0`.
+* `openvpn_tls_version_min`: Do not set this unless you really need it. I have one old client that makes me set it to '1.0' (see openvpn manual).
 * `openvpn_server_ip`: subnet where vpn clients get their ip from, e.g. 10.8.0.0
 * `openvpn_server_mask`: e.g. 255.255.255.0
 * `openvpn_server_ipv6`: e.g. 2001:db8:1234:6f3::1/64
