@@ -49,7 +49,7 @@
     state: started
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: Add nft rules to accept VPN connections
+- name: Add all nft rules for openvpn
   ansible.builtin.template:
     src: etc/nftables.conf.d/openvpn.nft.j2
     dest: /etc/nftables.conf.d/openvpn.nft
