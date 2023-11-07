@@ -10,7 +10,7 @@ This openvpn ansible role just covers my use case.
     * different levels of access by VPN clients:
         * least privileged/always on: the client connects to the vpn automatically and is accessible via `ssh`. This enables me to do remote management even if it is behind NAT. No DNS Server pushed.
         * normal privileges: access to some local services (and other vpn clients).
-        * full privileges: access to some local services and masquerading to the internet (not yet implemented)
+        * full privileges: access to some local services and masquerading IPv4 / routing IPv6 to the internet.
     * if there is file in this directory whose name matches the name in the certificate, this will be executed by `openvpn`
     * there a is *DEFAULT* client config provided (currently empty). You can add options there to get pushed to all clients except the ones that have an individual client config.
 * There is no support for multiple openvpn servers on the same host in this role.
@@ -20,10 +20,11 @@ This openvpn ansible role just covers my use case.
 To be set in `host_vars`:
 
 * `openvpn_server_interfaces`: a list of interfaces where connects are accepted. Usually at least the upstream interface, e.g. `enp1s0`.
+* `openvpn_internet_interface`: one interface name, used as target interface when allowing incoming vpn traffic to access the internet (see below). Usually the upstream interface, e.g. `enp1s0`.
 * `openvpn_tls_version_min`: Do not set this unless you really need it. I have one old client that makes me set it to '1.0' (see openvpn manual).
-* `openvpn_server_ip`: subnet where vpn clients get their ip from, e.g. 10.8.0.0
-* `openvpn_server_mask`: e.g. 255.255.255.0
-* `openvpn_server_ipv6`: e.g. 2001:db8:1234:6f3::1/64
+* `openvpn_server_ip`: subnet where vpn clients get their ip from, e.g. `10.8.0.0`
+* `openvpn_server_mask`: e.g. `255.255.255.0`
+* `openvpn_server_ipv6`: e.g. `2001:db8:1234:6f3::1/64`
 * `openvpn_server_name`: Currently used for systemd service name only
 * Four pointers to crypto files on the **ansible host** (these files must be present to run ansible, but the content is only used when the file is not present on the target yet).
     * `openvpn_dhfile_source`, e.g. `~/vpnsecrets/dh.pem`
@@ -74,32 +75,44 @@ openvpn_nft_targets_smb:
 ~~~
 
 * `openvpn_nft_targets_imaps`: similar to `openvpn_nft_targets_smb`, but affects the imaps port.
+* `openvpn_nft_targets_ucshttps`: similar to `openvpn_nft_targets_smb`, but affects the https port.
 * `openvpn_nft_client_rules`: a list of dicts defining what vpn clients (defined by the name in the client certificate) have access to what service. The value of the `name` attribute is used to construct the filternames as defined in `templates/etc/nftables.conf.d/openvpn.nft.j2`. 
-   * **WARNING** The client names **must** be `define`d  in that jinja template (e.g. `define zeta_v4 = { 10.8.0.99 }`), otherwise an invalid nftables configuration is generated.
+   * **WARNING** The client names referred to in those configs can only be used when they are already present in `/var/log/openvpn/ipp.txt` on the target system. So you always have to connect first via VPN with a new client before you can use its name in these config variables. The `systemd` unit `openvpnmapping` ensures that new connections are immediately mirrored to both `/etc/nftables.conf.d/clients.openvpn` and `/etc/dnsmasq.hosts.d/hosts.openvpn` so that the required mapping from a name to both its IPv4 and IPv6 addresses is known to both nftables and dnsmasq.
+   * `vpn_unifi` allows to access a unifi instance on a remote vpn client from another vpn client
+   * `internet` allows to access the internet (IPv4: masquerading/IPv6: routing) from a vpn client. Note that these rules are only configured when `openvpn_internet_interface` is defined.
 ~~~
 openvpn_nft_client_rules:
   - name: localhost_dns
     clients:
-      - lambda_v4
+      - lambda
   - name: localhost_ssh
     clients:
-      - lambda_v4
+      - lambda
   - name: localhost_unifi
     clients:
-      - lambda_v4
-      - zeta_v4
+      - lambda
+      - zeta
   - name: localnet_ssh
     clients:
-      - lambda_v4
+      - lambda
   - name: localnet_smb
     clients:
-      - lambda_v4
+      - lambda
   - name: localnet_music
     clients:
-      - lambda_v4
+      - lambda
   - name: localnet_imaps
     clients:
-      - lambda_v4
+      - lambda
+  - name: localnet_ucshttps
+    clients:
+      - lambda
+  - name: vpn_unifi
+    clients:
+      - lambda
+  - name internet
+    clients:
+      - lambda
 ~~~
 
 Provided in `defaults`, can be overriden in `host_vars`
