@@ -70,6 +70,9 @@ add set inet filter from_vpn_to_localnet_ucshttps_v4 { type ipv4_addr ; }
 add set inet filter from_vpn_to_localnet_ucshttps_v6 { type ipv6_addr ; }
 add set inet filter from_vpn_to_vpn_unifi_v4 { type ipv4_addr ; }
 add set inet filter from_vpn_to_vpn_unifi_v6 { type ipv6_addr ; }
+add set inet filter from_vpn_to_internet_v4 { type ipv4_addr ; }
+add set inet filter from_vpn_to_internet_v6 { type ipv6_addr ; }
+add set ip   masq   from_vpn_to_internet_v4 { type ipv4_addr ; }
 # to be continued...
 
 # map client names to the host sets for the service specific rules
@@ -77,6 +80,9 @@ add set inet filter from_vpn_to_vpn_unifi_v6 { type ipv6_addr ; }
 {% for clientname in ruleset.clients %}
 add element inet filter from_vpn_to_{{ ruleset.name }}_v4 { ${{ clientname }}_v4 }
 add element inet filter from_vpn_to_{{ ruleset.name }}_v6 { ${{ clientname }}_v6 }
+{% if ruleset.name == 'internet' %}
+add element ip masq from_vpn_to_{{ ruleset.name }}_v4 { ${{ clientname }}_v4 }
+{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -113,3 +119,10 @@ add rule inet filter forward_apprules meta iifname tun0 meta oifname @local_inte
 add rule inet filter forward_apprules meta iifname @local_interfaces meta oifname tun0 ip saddr {{ openvpn_nft_nbd_source_ipv4 }} ip daddr @to_vpn_client_nbd tcp dport { 10809 } ct state new counter accept comment "forward vpn service nbd"
 add rule inet filter forward_apprules meta iifname @local_interfaces meta oifname tun0                                            ip daddr @to_vpn_client_unifi tcp dport { 8443 } ct state new counter accept comment "forward local vpn service unifi"
 add rule inet filter forward_apprules meta iifname tun0              meta oifname tun0 ip saddr @from_vpn_to_vpn_unifi_v4         ip daddr @to_vpn_client_unifi tcp dport { 8443 } ct state new counter accept comment "forward vpn to vpn service unifi"
+
+{% if openvpn_internet_interface is defined %}
+# Rules for accessing the internet from vpn
+add rule inet filter forward_apprules meta iifname tun0 meta oifname {{ openvpn_internet_interface }} ip saddr @from_vpn_to_internet_v4 ct state new counter accept comment "forward vpn to internet v4"
+add rule ip   masq   postrouting      meta iifname tun0 meta oifname {{ openvpn_internet_interface }} ip saddr @from_vpn_to_internet_v4 counter masquerade comment "masquerade from vpn to up"
+add rule inet filter forward_apprules meta iifname tun0 meta oifname {{ openvpn_internet_interface }} ip6 saddr @from_vpn_to_internet_v6 ct state new counter accept comment "forward vpn to internet v6"
+{% endif %}

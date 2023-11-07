@@ -72,16 +72,16 @@ dnsmasq_except_interface: enp1s0
 dnsmasq_other_servers:
   - name: UCS Domains
     domains:
-      - t7.example.com
+      - t7.example.org
       - 0.26.172.in-addr.arpa
     serverips:
       - 172.26.0.10
       - 172.26.0.12
 
-dnsmasq_dhcp_domain: example.com
+dnsmasq_dhcp_domain: example.org
 
 dnsmasq_dhcp_search_domain_names:
-  - example.ch
+  - example.org
   - example.net
 
 dnsmasq_dhcp_staticips_source: ~/staticips
@@ -106,6 +106,7 @@ dnsmasq_dhcp_ranges:
 
 openvpn_server_interfaces:
   - enp1s0
+openvpn_internet_interface: enp1s0
 openvpn_server_ip: 10.8.0.0
 openvpn_server_mask: 255.255.255.0
 openvpn_server_ipv6: 2001:db8:1234:6f3::1/64
@@ -186,6 +187,9 @@ openvpn_nft_client_rules:
     clients:
       - lambda
   - name: vpn_unifi
+    clients:
+      - lambda
+  - name: internet
     clients:
       - lambda
 
