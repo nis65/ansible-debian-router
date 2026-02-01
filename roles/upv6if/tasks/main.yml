@@ -12,6 +12,17 @@
     backup: no
   register: configupipv6
 
+- name: define duid for dhcpcd
+  ansible.builtin.copy:
+    owner: root
+    group: root
+    mode: '0640'
+    content: |
+      {{ upv6if_dhcp_duid }}
+    dest: /var/lib/dhcpcd/duid
+  when: upv6if_dhcp_duid is defined
+  register: duidfile
+
 - name: show the global ips
   ansible.builtin.debug:
     msg: '{{ ansible_facts[upv6if_iface].ipv6 | selectattr ( "scope", "equalto", "global" ) | map ( attribute="address" ) }}'
@@ -23,7 +34,7 @@
 - name: restart uplink interface if no global ip or config changed
   ansible.builtin.shell:
     cmd: "ifdown {{ upv6if_iface }}; ifup {{ upv6if_iface }}"
-  when: ( currentnumberofipv6s == "0" ) or configupipv6.changed 
+  when: ( currentnumberofipv6s == "0" ) or configupipv6.changed or duidfile.changed
 
 - name: check delegated subnet 
   ansible.builtin.lineinfile: 

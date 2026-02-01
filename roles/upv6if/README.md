@@ -39,6 +39,7 @@ There are only very use case specific variables to set, so everything should go 
 upv6if_expected_delegation: "2001:db8:1234:6f0::/60"
 
 upv6if_iface: enp1s0
+upv6if_dhcp_duid: '00:01:00:01:31:10:fe:95:01:23:45:67:89:ab'
 upv6if_mode: dhcp
 upv6if_configlines:
   - "request_prefix 1"
