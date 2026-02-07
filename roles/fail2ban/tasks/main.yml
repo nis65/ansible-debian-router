@@ -10,23 +10,19 @@
     name: fail2ban
     state: present
 
-- name: Config fail2ban to use nftables
-  ansible.builtin.copy:
-    src: etc/fail2ban/jail.local
-    dest: /etc/fail2ban/jail.local
-  notify: Restart fail2ban
-
 - name: Add filter rule for openvpn
-  ansible.builtin.copy:
-    src: etc/fail2ban/filter.d/openvpn.local
+  ansible.builtin.template:
+    src: etc/fail2ban/filter.d/openvpn.local.j2
     dest: /etc/fail2ban/filter.d/openvpn.local
   notify: Restart fail2ban
+  when: openvpn_server_name is defined
 
 - name: Configure jail for openvpn
   ansible.builtin.template:
     src: etc/fail2ban/jail.d/openvpn.local.j2
     dest: /etc/fail2ban/jail.d/openvpn.local
   notify: Restart fail2ban
+  when: openvpn_server_name is defined
 
 - name: Config fail2ban nftables to add counters and add udp
   ansible.builtin.copy:
