@@ -1,3 +1,4 @@
 # This file is used to set your individual UPDATE URL
 # get it from https://freedns.afraid.org/dynamic/v2/
 # UPDATEURL="http://sync.afraid.org/u/..."
+# UPDATEV6URL="http://v6.sync.afraid.org/u/..."
