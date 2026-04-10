@@ -1,6 +1,6 @@
 
 openvpn_port: 1194
-openvpn_proto: udp
+openvpn_proto: udp6
 openvpn_verb: 4
 openvpn_write_ipp_sec: 300
 openvpn_script_security: 2
