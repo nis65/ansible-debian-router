@@ -13,11 +13,11 @@ dnsip4=`host -t a $ALIAS | awk '{ print $4 }'`
 
 if [[ "$localip4" == "$dnsip4" ]]
 then
-  true
+  echo "all good, doing nothing (localip4 $localip4 == dnsip4 $dnsip4)"
 else
   echo "`date` Local IPv4: $localip4, DNS IPv4: $dnsip4" > $STATUS
   if [[ -z "$UPDATEURL" ]]
-  then 
+  then
     echo "UPDATEURL is empty. Not updating, local check only" | tee -a $STATUS
   else
     wget -q -O - "$UPDATEURL" >> $STATUS
@@ -30,7 +30,7 @@ dnsip6=`host -t aaaa $ALIAS | awk '{ print $5 }'`
 
 if [[ "$localip6" == "$dnsip6" ]]
 then
-  true
+  echo "all good, doing nothing (localip6 $localip6 == dnsp6 $dnsip6)"
 else
   echo "`date` Local IPv6: $localip6, DNS IPv6: $dnsip6" > $STATUSV6
   if [[ -z "$UPDATEV6URL" ]]
