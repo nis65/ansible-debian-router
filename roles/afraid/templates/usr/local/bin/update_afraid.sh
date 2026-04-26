@@ -30,7 +30,7 @@ dnsip6=`host -t aaaa $ALIAS | awk '{ print $5 }'`
 
 if [[ "$localip6" == "$dnsip6" ]]
 then
-  echo "all good, doing nothing (localip6 $localip6 == dnsp6 $dnsip6)"
+  echo "all good, doing nothing (localip6 $localip6 == dnsip6 $dnsip6)"
 else
   echo "`date` Local IPv6: $localip6, DNS IPv6: $dnsip6" > $STATUSV6
   if [[ -z "$UPDATEV6URL" ]]
