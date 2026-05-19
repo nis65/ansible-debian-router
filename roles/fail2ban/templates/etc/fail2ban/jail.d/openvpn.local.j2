@@ -1,7 +1,7 @@
 [openvpn]
+backend  = systemd
 enabled  = true
 port     = 1194
 protocol = udp
 filter   = openvpn
-logpath  = /var/log/daemon.log
 maxretry = {{ fail2ban_openvpn_retry }}

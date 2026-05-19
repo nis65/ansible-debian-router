@@ -9,3 +9,5 @@ nft_unifi:
   - name: input_mgmt_udp
     ports:
       - "3478, 5514, 10001"
+
+unifi_accept_sha_reposig_until: "2028-02-01"

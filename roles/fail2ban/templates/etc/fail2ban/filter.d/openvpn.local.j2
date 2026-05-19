@@ -1,0 +1,19 @@
+
+[Definition]
+# Example messages from journal
+#
+# Feb 07 18:50:03 hostname openvpn[35664]: 192.168.1.151:58048 TLS Error: TLS handshake failed
+# Feb 07 16:37:12 hostname openvpn[35664]: 2001:db8:85a3::8a2e:370:7334 TLS Error: TLS handshake failed
+
+# Note that these error message comes with a delay of 60 seconds, so an attacker can try whatever
+# he/she wishes to during that time
+#
+# the first regex matches IPv4 connections attempts (that are logged WITH source port)
+# the seconde regex matchtes IPv6 connections attempty (that are logged WITHOUT source port)
+
+failregex = ^.+ openvpn\[\d+\]: <HOST>:\d+ TLS Error: TLS handshake failed$
+            ^.+ openvpn\[\d+\]: <HOST> TLS Error: TLS handshake failed$
+
+journalmatch = _SYSTEMD_UNIT=openvpn-server@{{ openvpn_server_name }}.service
+
+ignoreregex =

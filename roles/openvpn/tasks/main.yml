@@ -22,6 +22,14 @@
     dest: /etc/openvpn/server/{{ openvpn_server_name }}_clientconfig/{{ item.name }}
   loop: "{{ openvpn_client_options }}"
 
+- name: Create empty clients.openvpn if not present
+  ansible.builtin.copy:
+    dest: /etc/nftables.conf.d/clients.openvpn
+    mode: "644"
+    force: false
+    content: ''
+  notify: "Restart openvpn"
+
 - name: Add script to generate nft mapping from vpn static ips
   ansible.builtin.template:
     src: usr/local/bin/update_from_ipp.j2
@@ -66,24 +74,28 @@
     src: "{{ openvpn_dhfile_source }}"
     dest: /etc/openvpn/server/dh2048.pem
     force: no
+  notify: "Restart openvpn"
 
 - name: ensure ca.crt file is present
   ansible.builtin.copy:
     src: "{{ openvpn_cafile_source }}"
     dest: /etc/openvpn/server/ca.crt
     force: no
+  notify: "Restart openvpn"
 
 - name: ensure server.crt is present
   ansible.builtin.copy:
     src: "{{ openvpn_certfile_source }}"
     dest: /etc/openvpn/server/server.crt
     force: no
+  notify: "Restart openvpn"
 
 - name: ensure server.key file is present
   ansible.builtin.copy:
     src: "{{ openvpn_keyfile_source }}"
     dest: /etc/openvpn/server/server.key
     force: no
+  notify: "Restart openvpn"
 
 - name: Install openvpn server config
   ansible.builtin.template:

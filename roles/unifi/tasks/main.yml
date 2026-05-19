@@ -1,8 +1,8 @@
 ---
 
   # the install part of this playbook is an ansible implementation of the instructions here:
-  # https://gist.github.com/sinofool/233ed96dd85123ee5a87ad12e812d424
-  
+  # https://help.ui.com/hc/en-us/articles/220066768-Updating-and-Installing-Self-Hosted-UniFi-Network-Servers-Linux
+
 - name: Exit play if os_family is not Debian
   ansible.builtin.fail:
     msg: "ERROR: os_family of host {{ inventory_hostname }} is not Debian"
@@ -15,55 +15,57 @@
     backup: no
   notify: "Restart nftables for unifi"
 
-- name: Install curl, gpg
+- name: Install ca-certificates and apt-transport-https
   ansible.builtin.apt:
-    name: 
-      - curl
-      - gpg
+    name:
       - ca-certificates
       - apt-transport-https
     state: present
 
-- name: Check keyfile
-  ansible.builtin.stat:
-    path: /usr/share/keyrings/adoptopenjdk-archive-keyring.gpg
-  register: statresult
+- name: Configure mongodb repo
+  ansible.builtin.deb822_repository:
+    name: mongodb-org-8.0
+    types: deb
+    uris: https://repo.mongodb.org/apt/debian
+    suites: bookworm/mongodb-org/8.0
+    components: main
+    signed_by: https://pgp.mongodb.com/server-8.0.asc
+  register: mongorepo
 
-- name: Create keyfile if does not exist yet
-  ansible.builtin.shell:
-    cmd: 'curl -fsSL "https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public" | gpg --dearmor --yes -o /usr/share/keyrings/adoptopenjdk-archive-keyring.gpg'
-  when: not statresult.stat.exists
- 
-- name: configure repo for java
-  ansible.builtin.copy:
-    src: etc/apt/sources.list.d/adoptopenjdk.list
-    dest: /etc/apt/sources.list.d/adoptopenjdk.list
+- name: Create subdirs needed for next step
+  ansible.builtin.file:
+    path: /etc/crypto-policies/back-ends
+    state: directory
+    mode: '755'
 
-- name: Install MongoDB apt key
-  ansible.builtin.apt_key:
-    url: https://www.mongodb.org/static/pgp/server-3.6.asc
-    state: present
+# See https://community.ui.com/questions/Unifi-debian-repo-error/9dfaf8b5-84dd-4123-9d7b-229f7b6091f3
+- name: Accept SHA1 a little longer for Repo signing (unifi)
+  ansible.builtin.template:
+    src: etc/crypto-policies/back-ends/apt-sequoia.config.j2
+    dest: /etc/crypto-policies/back-ends/apt-sequoia.config
+    backup: no
+  register: aptsequoia
 
-- name: Configure MongoDB repo
-  ansible.builtin.copy:
-    src: etc/apt/sources.list.d/mongodb.list
-    dest: /etc/apt/sources.list.d/mongodb.list
+- name: Configure unifi repo
+  ansible.builtin.deb822_repository:
+    name: unifi-stable
+    types: deb
+    uris: https://www.ui.com/downloads/unifi/debian
+    suites: stable
+    components: ubiquiti
+    signed_by: https://dl.ui.com/unifi/unifi-repo.gpg
+  register: unifirepo
 
-- name: Install unifi apt key
-  ansible.builtin.apt_key:
-    url: https://dl.ui.com/unifi/unifi-repo.gpg
-    state: present
+- name: update apt cache if repo changed
+  ansible.builtin.apt:
+    update_cache: yes
+  when: mongorepo.changed or aptsequoia.changed or unifirepo.changed
 
-- name: Configure Unifi repo
-  ansible.builtin.copy:
-    src: etc/apt/sources.list.d/100-ubnt-unifi.list
-    dest: /etc/apt/sources.list.d/100-ubnt-unifi.list
-
-- name: Install openjdk8, unifi
+- name: install mongodb-org, unifi
   ansible.builtin.apt:
     name:
-      - adoptopenjdk-8-hotspot
+      - mongodb-org
       - unifi
     state: present
-    update_cache: yes
   notify: "Restart unifi"
+  ignore_errors: "{{ ansible_check_mode }}"
